@@ -1,0 +1,74 @@
+/**
+ * Lightbox Component
+ *
+ * Full-screen image viewer with overlay
+ */
+
+@layer components {
+    .lightbox-overlay {
+        position: fixed;
+        inset: 0;
+        background-color: rgba(0, 0, 0, 0.95);
+        z-index: 9999;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        opacity: 0;
+        visibility: hidden;
+        transition:
+            opacity var(--transition-base),
+            visibility var(--transition-base);
+    }
+
+    .lightbox-overlay.active {
+        opacity: 1;
+        visibility: visible;
+    }
+
+    .lightbox-container {
+        position: relative;
+        max-width: 90vw;
+        max-height: 90vh;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .lightbox-image {
+        max-width: 100%;
+        max-height: 90vh;
+        width: auto;
+        height: auto;
+        display: block;
+    }
+
+    .lightbox-close {
+        position: absolute;
+        top: -3rem;
+        right: 0;
+        background: none;
+        border: none;
+        font-size: 3rem;
+        line-height: 1;
+        cursor: pointer;
+        padding: 0;
+        width: 3rem;
+        height: 3rem;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    /* Cursor hints */
+    .lightbox-overlay {
+        cursor: zoom-out;
+    }
+
+    .lightbox-image {
+        cursor: default;
+    }
+
+    .lightbox-close {
+        cursor: pointer;
+    }
+}

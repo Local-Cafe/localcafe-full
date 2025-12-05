@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <meta
+      :if={assigns[:page_description]}
+      name="description"
+      content={assigns[:page_description]}
+    />
+    <%!-- Open Graph meta tags for social media sharing --%>
+    <meta
+      property="og:title"
+      content={assigns[:page_title] || "LocalCafe"}
+    />
+    <meta
+      :if={assigns[:page_description]}
+      property="og:description"
+      content={assigns[:page_description]}
+    />
+    <meta
+      :if={assigns[:page_image]}
+      property="og:image"
+      content={assigns[:page_image]}
+    />
+    <meta
+      property="og:url"
+      content={assigns[:page_url] || url(~p"/")}
+    />
+    <meta
+      property="og:type"
+      content={assigns[:page_type] || "website"}
+    />
+    <meta property="og:site_name" content="LocalCafe.org" />
+    <%!-- Twitter Card meta tags --%>
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content={assigns[:page_title] || "LocalCafe"}
+    />
+    <meta
+      :if={assigns[:page_description]}
+      name="twitter:description"
+      content={assigns[:page_description]}
+    />
+    <meta
+      :if={assigns[:page_image]}
+      name="twitter:image"
+      content={assigns[:page_image]}
+    />
+    <.live_title default="LocalCafe" suffix="- LocalCafe.org">
+      {assigns[:page_title]}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script defer phx-track-static type="module" src={~p"/assets/js/app.js"}>
+    </script>
+    <script>
+      (() => {
+        const setTheme = (theme) => {
+          if (theme === "system") {
+            localStorage.removeItem("phx:theme");
+            document.documentElement.removeAttribute("data-theme");
+          } else {
+            localStorage.setItem("phx:theme", theme);
+            document.documentElement.setAttribute("data-theme", theme);
+          }
+        };
+
+        // Initialize theme on page load
+        if (!document.documentElement.hasAttribute("data-theme")) {
+          setTheme(localStorage.getItem("phx:theme") || "system");
+        }
+
+        // Listen for storage changes from other tabs/windows
+        window.addEventListener("storage", (e) => {
+          if (e.key === "phx:theme") {
+            setTheme(e.newValue || "system");
+          }
+        });
+
+        // Listen for theme toggle from web component or other sources
+        window.addEventListener("phx:set-theme", (e) => {
+          const theme = e.detail?.theme || e.target?.dataset?.phxTheme;
+          if (theme) {
+            setTheme(theme);
+          }
+        });
+      })();
+    </script>
+  </head>
+  <body>
+    {@inner_content}
+  </body>
+</html>

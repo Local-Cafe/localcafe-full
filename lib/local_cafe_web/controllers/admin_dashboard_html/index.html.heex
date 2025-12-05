@@ -1,0 +1,170 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} current_path={@conn.request_path}>
+  <:title>
+    <h1>Admin Dashboard</h1>
+  </:title>
+
+  <div class="admin-dashboard-page">
+    <%!-- Quick Navigation --%>
+    <div class="admin-quick-nav">
+      <.link navigate={~p"/admin/users"} class="quick-nav-link">
+        <span class="quick-nav-icon">👥</span>
+        <span>Users</span>
+      </.link>
+
+      <.link navigate={~p"/admin/billing"} class="quick-nav-link">
+        <span class="quick-nav-icon">💰</span>
+        <span>Billing</span>
+      </.link>
+      <.link navigate={~p"/admin/comments"} class="quick-nav-link">
+        <span class="quick-nav-icon">💬</span>
+        <span>Comments</span>
+      </.link>
+      <.link navigate={~p"/admin/analytics"} class="quick-nav-link">
+        <span class="quick-nav-icon">📊</span>
+        <span>Analytics</span>
+      </.link>
+    </div>
+
+    <%!-- Statistics Grid --%>
+    <div class="stats-grid">
+      <%!-- Users Card --%>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <h3 class="stat-card-title">Users</h3>
+          <.link navigate={~p"/admin/users"} class="stat-card-link">
+            View all →
+          </.link>
+        </div>
+        <div class="stat-card-body">
+          <div class="stat-primary">
+            <span class="stat-value">{@user_stats.total}</span>
+            <span class="stat-label">Total Users</span>
+          </div>
+          <div class="stat-breakdown">
+            <div class="stat-item">
+              <span class="stat-item-value">{@user_stats.admins}</span>
+              <span class="stat-item-label">Admins</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-item-value">{@user_stats.trusted}</span>
+              <span class="stat-item-label">Trusted</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-item-value">{@user_stats.regular}</span>
+              <span class="stat-item-label">Regular</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%!-- Posts Card --%>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <h3 class="stat-card-title">Posts</h3>
+          <.link navigate={~p"/posts"} class="stat-card-link">
+            View all →
+          </.link>
+        </div>
+        <div class="stat-card-body">
+          <div class="stat-primary">
+            <span class="stat-value">{@post_stats.total}</span>
+            <span class="stat-label">Total Posts</span>
+          </div>
+          <div class="stat-breakdown">
+            <div class="stat-item">
+              <span class="stat-item-value">{@post_stats.published}</span>
+              <span class="stat-item-label">Published</span>
+            </div>
+            <div class="stat-item">
+              <span class="stat-item-value">{@post_stats.drafts}</span>
+              <span class="stat-item-label">Drafts</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%!-- Comments Card --%>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <h3 class="stat-card-title">Comments</h3>
+          <.link navigate={~p"/admin/comments"} class="stat-card-link">
+            View all →
+          </.link>
+        </div>
+        <div class="stat-card-body">
+          <div class="stat-primary">
+            <span class="stat-value">{@comment_stats.total}</span>
+            <span class="stat-label">Total Comments</span>
+          </div>
+          <div class="stat-breakdown">
+            <div class="stat-item">
+              <span class="stat-item-value">{@comment_stats.approved}</span>
+              <span class="stat-item-label">Approved</span>
+            </div>
+            <div class="stat-item stat-item-warning">
+              <span class="stat-item-value">{@comment_stats.pending}</span>
+              <span class="stat-item-label">Pending</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <%!-- Billing Card --%>
+      <div class="stat-card">
+        <div class="stat-card-header">
+          <h3 class="stat-card-title">Billing</h3>
+          <.link navigate={~p"/admin/billing"} class="stat-card-link">
+            View all →
+          </.link>
+        </div>
+        <div class="stat-card-body">
+          <div class="stat-primary">
+            <span class="stat-value">
+              ${:erlang.float_to_binary(@billing_stats.succeeded_net / 100, decimals: 2)}
+            </span>
+            <span class="stat-label">Net Revenue</span>
+          </div>
+          <div class="stat-breakdown">
+            <div class="stat-item">
+              <span class="stat-item-value">{@billing_stats.succeeded_count}</span>
+              <span class="stat-item-label">Succeeded</span>
+            </div>
+            <%= if @billing_stats.pending_count > 0 do %>
+              <div class="stat-item stat-item-warning">
+                <span class="stat-item-value">{@billing_stats.pending_count}</span>
+                <span class="stat-item-label">Pending</span>
+              </div>
+            <% end %>
+            <%= if @billing_stats.refunded_count > 0 do %>
+              <div class="stat-item">
+                <span class="stat-item-value">{@billing_stats.refunded_count}</span>
+                <span class="stat-item-label">Refunded</span>
+              </div>
+            <% end %>
+            <%= if @billing_stats.failed_count > 0 do %>
+              <div class="stat-item">
+                <span class="stat-item-value">{@billing_stats.failed_count}</span>
+                <span class="stat-item-label">Failed</span>
+              </div>
+            <% end %>
+          </div>
+        </div>
+      </div>
+
+      <%!-- Analytics Card --%>
+      <div class="stat-card stat-card-wide">
+        <div class="stat-card-header">
+          <h3 class="stat-card-title">Analytics</h3>
+          <.link navigate={~p"/admin/analytics"} class="stat-card-link">
+            View real-time →
+          </.link>
+        </div>
+        <div class="stat-card-body">
+          <p class="stat-description">
+            View real-time analytics including online users, page views, top pages, geographic distribution, and referrer data.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

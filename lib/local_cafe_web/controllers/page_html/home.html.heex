@@ -1,0 +1,26 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} current_path={@conn.request_path}>
+  <:title>
+    <h1>Welcome To LocalCafe.org</h1>
+  </:title>
+  <div class="home-container">
+    <%!-- Latest Blog Posts Section --%>
+    <section class="home-section">
+      <div class="home-section-header">
+        <span class="home-section-title">Latest Posts</span>
+        <.link navigate={~p"/posts"} class="home-section-link">
+          View all posts →
+        </.link>
+      </div>
+
+      <%= if @latest_posts != [] do %>
+        <div class="blog-grid">
+          <%= for post <- @latest_posts do %>
+            <LocalCafeWeb.PostHTML.blog_card post={post} />
+          <% end %>
+        </div>
+      <% else %>
+        <p class="home-empty-message">No posts available yet.</p>
+      <% end %>
+    </section>
+  </div>
+</Layouts.app>

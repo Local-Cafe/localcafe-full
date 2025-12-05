@@ -1,0 +1,122 @@
+/**
+ * Footer Component
+ *
+ * Site footer with social media links and copyright.
+ */
+
+@layer components {
+    .site-footer {
+        background: repeating-linear-gradient(
+            45deg,
+            var(--color-background),
+            var(--color-background) 12px,
+            var(--color-primary) 0px 24px
+        );
+    }
+    .footer-container {
+        padding: var(--space-3) var(--space-5);
+        background-color: var(--color-primary);
+        max-width: var(--container-2xl); /* 1400px */
+        margin: auto;
+    }
+
+    .footer-content {
+        color: var(--color-background);
+
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: var(--space-4);
+    }
+
+    /* Social media links */
+    .footer-social {
+        display: flex;
+        justify-content: center;
+        gap: var(--space-6);
+    }
+
+    .footer-social-link {
+        &:focus-visible {
+            outline-offset: var(--focus-ring-offset);
+        }
+    }
+
+    .footer-icon {
+        fill: var(--color-background);
+
+        width: 1.5rem;
+        height: 1.5rem;
+    }
+
+    /* Footer navigation */
+    .footer-nav {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: center;
+        gap: var(--space-4);
+        align-items: center;
+    }
+
+    .footer-nav-link {
+        color: var(--color-background);
+        text-decoration: none;
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        transition: opacity var(--transition-fast);
+
+        &:hover {
+            opacity: 0.8;
+        }
+
+        &:focus-visible {
+            outline-offset: var(--focus-ring-offset);
+        }
+    }
+
+    /* Copyright text */
+    .footer-copyright {
+        display: flex;
+        align-items: center;
+        color: var(--color-background);
+        margin: 0;
+        text-align: center;
+        font-size: var(--font-size-sm);
+        line-height: 1.5;
+        svg {
+            fill: var(--color-background);
+            display: inline;
+            margin-left: 0.4rem;
+            margin-right: 0.4rem;
+            width: 1.2rem;
+            height: 1.2rem;
+        }
+    }
+
+    /* Responsive breakpoints */
+    @media (min-width: 1400px) {
+        .footer-content {
+            flex-direction: row;
+            justify-content: space-between;
+            align-items: flex-start;
+            gap: var(--space-8);
+        }
+
+        .footer-nav {
+            order: 1;
+            justify-content: flex-start;
+        }
+
+        .footer-copyright {
+            order: 2;
+            margin: 0;
+            text-align: left;
+        }
+
+        .footer-social {
+            order: 3;
+        }
+    }
+}

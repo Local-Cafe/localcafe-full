@@ -1,0 +1,165 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} current_path={@conn.request_path}>
+  <:title>
+    <h1>Billing & Payments</h1>
+  </:title>
+
+  <div class="admin-billing-page">
+    <%!-- Revenue Stats --%>
+    <div class="billing-stats">
+      <div class="billing-stat">
+        <div class="stat-label">Succeeded Revenue</div>
+        <div class="stat-value">
+          ${:erlang.float_to_binary(@billing_stats.succeeded_revenue / 100, decimals: 2)}
+        </div>
+        <div class="stat-meta">{@billing_stats.succeeded_count} payments</div>
+      </div>
+      <div class="billing-stat billing-stat-pending">
+        <div class="stat-label">Pending Revenue</div>
+        <div class="stat-value">
+          ${:erlang.float_to_binary(@billing_stats.pending_revenue / 100, decimals: 2)}
+        </div>
+        <div class="stat-meta">{@billing_stats.pending_count} in progress</div>
+      </div>
+      <%= if @billing_stats.refunded_count > 0 do %>
+        <div class="billing-stat billing-stat-refunded">
+          <div class="stat-label">Refunded</div>
+          <div class="stat-value">
+            ${:erlang.float_to_binary(@billing_stats.refunded_amount / 100, decimals: 2)}
+          </div>
+          <div class="stat-meta">{@billing_stats.refunded_count} refunds</div>
+        </div>
+      <% end %>
+      <div class="billing-stat">
+        <div class="stat-label">Processing Fees</div>
+        <div class="stat-value">
+          ${:erlang.float_to_binary(@billing_stats.succeeded_fees / 100, decimals: 2)}
+        </div>
+      </div>
+      <div class="billing-stat billing-stat-net">
+        <div class="stat-label">Net Income</div>
+        <div class="stat-value stat-value-primary">
+          ${:erlang.float_to_binary(@billing_stats.succeeded_net / 100, decimals: 2)}
+        </div>
+      </div>
+    </div>
+
+    <%!-- Filter Tabs --%>
+    <div class="payment-filters">
+      <.link
+        navigate={~p"/admin/billing?filter=all"}
+        class={["filter-tab", if(@filter == "all", do: "filter-tab-active", else: "")]}
+      >
+        All Payments
+      </.link>
+      <.link
+        navigate={~p"/admin/billing?filter=succeeded"}
+        class={["filter-tab", if(@filter == "succeeded", do: "filter-tab-active", else: "")]}
+      >
+        Succeeded
+      </.link>
+      <.link
+        navigate={~p"/admin/billing?filter=pending"}
+        class={["filter-tab", if(@filter == "pending", do: "filter-tab-active", else: "")]}
+      >
+        Pending
+      </.link>
+      <.link
+        navigate={~p"/admin/billing?filter=refunded"}
+        class={["filter-tab", if(@filter == "refunded", do: "filter-tab-active", else: "")]}
+      >
+        Refunded
+      </.link>
+      <.link
+        navigate={~p"/admin/billing?filter=failed"}
+        class={["filter-tab", if(@filter == "failed", do: "filter-tab-active", else: "")]}
+      >
+        Failed
+      </.link>
+    </div>
+
+    <%!-- Payment Count --%>
+    <div class="payment-count">
+      Total: {length(@payments)} {if length(@payments) == 1, do: "payment", else: "payments"}
+    </div>
+
+    <%!-- Payments List --%>
+    <%= if @payments == [] do %>
+      <div class="empty-payments">
+        <p>No payments found.</p>
+      </div>
+    <% else %>
+      <div class="payments-list">
+        <%= for payment <- @payments do %>
+          <.link navigate={~p"/admin/billing/#{payment.id}"} class="payment-card-link">
+            <div class="payment-card">
+              <div class="payment-header">
+                <div class="payment-status-container">
+                  <span class={"payment-status-badge payment-status-#{payment.status}"}>
+                    {String.replace(payment.status, "_", " ") |> String.capitalize()}
+                  </span>
+                </div>
+                <div class="payment-date">
+                  {Calendar.strftime(payment.inserted_at, "%b %d, %Y %H:%M")}
+                </div>
+              </div>
+
+              <div class="payment-body">
+                <div class="payment-customer-info">
+                  <%= if payment.customer_email do %>
+                    <div class="payment-customer">{payment.customer_email}</div>
+                  <% else %>
+                    <div class="payment-customer payment-no-data">No customer email</div>
+                  <% end %>
+                  <%= if payment.card_brand && payment.card_last4 do %>
+                    <div class="payment-method">
+                      {String.capitalize(payment.card_brand)} ···· {payment.card_last4}
+                    </div>
+                  <% end %>
+                </div>
+
+                <div class="payment-amounts">
+                  <div class="payment-amount-item">
+                    <span class="amount-label">Amount</span>
+                    <span class="amount-value amount-total">
+                      ${:erlang.float_to_binary(payment.amount / 100, decimals: 2)}
+                    </span>
+                  </div>
+                  <%= if payment.amount_refunded && payment.amount_refunded > 0 do %>
+                    <div class="payment-amount-item">
+                      <span class="amount-label">Refunded</span>
+                      <span class="amount-value amount-refunded">
+                        -${:erlang.float_to_binary(payment.amount_refunded / 100, decimals: 2)}
+                      </span>
+                    </div>
+                  <% end %>
+                  <%= if payment.fee do %>
+                    <div class="payment-amount-item">
+                      <span class="amount-label">Fee</span>
+                      <span class="amount-value amount-fee">
+                        ${:erlang.float_to_binary(payment.fee / 100, decimals: 2)}
+                      </span>
+                    </div>
+                  <% end %>
+                  <%= if payment.net do %>
+                    <div class="payment-amount-item">
+                      <span class="amount-label">Net</span>
+                      <span class="amount-value amount-net">
+                        ${:erlang.float_to_binary(payment.net / 100, decimals: 2)}
+                      </span>
+                    </div>
+                  <% end %>
+                </div>
+              </div>
+
+              <div class="payment-footer">
+                <code class="payment-stripe-id">
+                  {payment.stripe_payment_intent_id}
+                </code>
+              </div>
+            </div>
+          </.link>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+</Layouts.app>

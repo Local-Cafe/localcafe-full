@@ -1,0 +1,103 @@
+/**
+ * Button Components
+ *
+ * Styles for .button class used by the button component in core_components.ex.
+ */
+
+@layer components {
+    .btn {
+        /* Layout */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+        padding: var(--spacing-xs) var(--spacing-md);
+
+        /* Typography */
+        font-family: var(--font-display);
+        font-size: var(--size-step--2);
+        font-weight: var(--font-weight-bold);
+        line-height: var(--leading-flat);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        white-space: nowrap;
+
+        /* Visual - Sharp edges, prominent borders */
+        background-color: var(--color-background-secondary);
+        color: var(--color-primary);
+        border: var(--border-width) var(--border-style) var(--color-primary);
+        cursor: pointer;
+        user-select: none;
+
+        /* Transitions */
+        transition: all var(--transition-base) var(--transition-timing);
+
+        /* States */
+        &:hover {
+            color: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+            background-color: var(--color-background-tertiary);
+        }
+
+        &:active {
+            background-color: var(--color-background-tertiary);
+        }
+
+        &:focus-visible {
+            outline-offset: var(--focus-ring-offset);
+        }
+
+        &:disabled,
+        &[disabled] {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    }
+    .btn-primary {
+        width: 100%;
+        padding: var(--space-4);
+        font-size: var(--text-base);
+        font-weight: var(--font-semibold);
+        color: var(--color-background);
+        background: var(--color-primary);
+        border: none;
+
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+    }
+
+    .btn-primary :hover:not(:disabled) {
+        background: var(--color-primary);
+    }
+
+    .btn-primary :disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-primary :focus-visible {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+    }
+
+    .btn-spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+}

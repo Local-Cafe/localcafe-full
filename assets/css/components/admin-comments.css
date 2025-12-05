@@ -1,0 +1,155 @@
+/**
+ * Admin Comments Component
+ * Comment moderation interface for admins
+ */
+
+@layer components {
+    .admin-comments-page {
+        max-width: var(--container-2xl); /* 1400px */
+        margin: auto;
+    }
+
+    /* Filter Tabs */
+    .comment-filters {
+        display: flex;
+        gap: var(--space-2);
+        margin: var(--space-6) 0;
+    }
+
+    .filter-tab {
+        padding: var(--space-3) var(--space-6);
+        background-color: var(--color-background-secondary);
+        text-decoration: none;
+        font-weight: var(--font-medium);
+
+        transition: all var(--transition-fast);
+
+        &:hover {
+            background-color: var(--color-background-tertiary);
+        }
+
+        &:active {
+            background-color: var(--color-background-tertiary);
+        }
+    }
+
+    .filter-tab-active {
+        background-color: var(--color-background-tertiary);
+        font-weight: var(--font-bold);
+    }
+
+    /* User Filter */
+    .comment-user-filter {
+        margin: var(--space-6) 0;
+        padding: var(--space-4);
+        background-color: var(--color-background-secondary);
+    }
+
+    .comment-user-filter p {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin: 0;
+        font-weight: var(--font-medium);
+    }
+
+    /* Comments List */
+    .admin-comments-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        margin-top: var(--space-6);
+    }
+
+    .empty-comments {
+        padding: var(--space-12);
+        text-align: center;
+        background-color: var(--color-background-secondary);
+    }
+
+    /* Comment Card */
+    .admin-comment-card {
+        background-color: var(--color-background-secondary);
+
+        padding: var(--space-4);
+    }
+
+    /* Comment Header */
+    .comment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-3);
+    }
+
+    .comment-meta {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+        font-size: var(--size-step--1);
+    }
+
+    .comment-author {
+        font-weight: var(--font-bold);
+    }
+
+    /* Type Badge */
+    .comment-type-badge {
+        padding: var(--space-1) var(--space-2);
+        background-color: var(--color-background-tertiary);
+
+        font-size: var(--size-step--2);
+        font-weight: var(--font-bold);
+        text-transform: uppercase;
+    }
+
+    /* Status Badge */
+    .comment-status-badge {
+        padding: var(--space-1) var(--space-2);
+        background-color: var(--color-background-tertiary);
+
+        font-size: var(--size-step--2);
+        font-weight: var(--font-bold);
+    }
+
+    /* Comment Content */
+    .comment-content {
+        margin-bottom: var(--space-4);
+    }
+
+    .comment-on {
+        font-size: var(--size-step--1);
+        margin-bottom: var(--space-2);
+    }
+
+    .comment-link {
+        text-decoration: none;
+        font-weight: var(--font-medium);
+    }
+
+    .comment-link:hover {
+        text-decoration: underline;
+    }
+
+    .comment-body {
+        padding: var(--space-3);
+        background-color: var(--color-background-tertiary);
+
+        line-height: var(--leading-relaxed);
+        white-space: pre-wrap;
+        word-wrap: break-word;
+    }
+
+    /* Comment Actions */
+    .comment-actions {
+        display: flex;
+        gap: var(--space-2);
+        align-items: center;
+    }
+
+    .btn-sm {
+        padding: var(--space-2) var(--space-3);
+        font-size: var(--size-step--1);
+    }
+}

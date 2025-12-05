@@ -1,0 +1,65 @@
+<.form :let={f} for={@changeset} action={@action} data-slug-form="">
+  <.input
+    field={f[:title]}
+    type="text"
+    label="Title"
+    placeholder="Enter a catchy title"
+    data-slug-source=""
+  />
+  <.input
+    field={f[:slug]}
+    type="text"
+    label="Slug"
+    hint="Lowercase letters, numbers, and hyphens only"
+    placeholder="my-post-slug"
+    data-slug-target=""
+  />
+  <.input
+    field={f[:description]}
+    type="textarea"
+    label="Description"
+    placeholder="A brief summary of your post"
+  />
+  <.input
+    field={f[:body]}
+    type="textarea"
+    label="Body"
+    placeholder="Write your post content here..."
+  />
+  <.input
+    field={f[:tags]}
+    type="text"
+    label="Tags"
+    value={Enum.map_join(@changeset.data.tags || [], ", ", & &1.name)}
+    hint="Comma-separated tags (e.g. elixir, phoenix, web)"
+    placeholder="elixir, phoenix, web"
+  />
+  <.input
+    field={f[:price]}
+    type="number"
+    label="Price (optional)"
+    hint="Price in cents (e.g. 999 for $9.99). Leave blank for free post."
+    placeholder="0"
+    min="0"
+    step="1"
+  />
+  <.input field={f[:published_at]} type="date" label="Published at" />
+  <.input field={f[:draft]} type="checkbox" label="Draft" />
+
+  <div class="form-section">
+    <h3 class="section-title">Post Images</h3>
+    <p class="section-description">
+      Add images to your blog post. The first image or the one marked as primary will be used as the featured image.
+    </p>
+    <post-image-manager
+      form-name="post"
+      images-data={Jason.encode!(@changeset.data.images || [])}
+    >
+    </post-image-manager>
+  </div>
+
+  <footer>
+    <.button variant="primary">Save Post</.button>
+    <.button :if={@return_to} href={@return_to}>Cancel</.button>
+  </footer>
+</.form>

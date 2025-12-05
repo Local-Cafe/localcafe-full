@@ -1,0 +1,62 @@
+<Layouts.app flash={@flash} current_scope={@current_scope} current_path={@conn.request_path}>
+  <:title>
+    <h1>Account Settings</h1>
+  </:title>
+  <div class="text-center">
+    <.header>
+      <:subtitle>Manage your account username, email address and password settings</:subtitle>
+    </.header>
+  </div>
+
+  <.form :let={f} for={@username_changeset} action={~p"/users/settings"} id="update_username">
+    <input type="hidden" name="action" value="update_username" />
+
+    <.input
+      field={f[:username]}
+      type="text"
+      label="Username"
+      autocomplete="username"
+      placeholder={@current_scope.user.username || "Choose a username"}
+    />
+    <p class="help-text">
+      Username is required to comment on posts and photos. 3-30 characters, letters, numbers, underscores, and dashes only.
+    </p>
+    <.button variant="primary" phx-disable-with="Saving...">Save Username</.button>
+  </.form>
+
+  <div class="divider" />
+
+  <.form :let={f} for={@email_changeset} action={~p"/users/settings"} id="update_email">
+    <input type="hidden" name="action" value="update_email" />
+
+    <.input field={f[:email]} type="email" label="Email" autocomplete="username" required />
+
+    <.button variant="primary" phx-disable-with="Changing...">Change Email</.button>
+  </.form>
+
+  <div class="divider" />
+
+  <.form :let={f} for={@password_changeset} action={~p"/users/settings"} id="update_password">
+    <input type="hidden" name="action" value="update_password" />
+
+    <.input
+      field={f[:password]}
+      type="password"
+      label="New password"
+      autocomplete="new-password"
+      placeholder="************"
+      required
+    />
+    <.input
+      field={f[:password_confirmation]}
+      type="password"
+      label="Confirm new password"
+      autocomplete="new-password"
+      placeholder="************"
+      required
+    />
+    <.button variant="primary" phx-disable-with="Changing...">
+      Save Password
+    </.button>
+  </.form>
+</Layouts.app>

@@ -1,0 +1,183 @@
+/**
+ * Color Tokens
+ *
+ * Semantic color system with explicit light/dark mode definitions.
+ * No default mode - all modes are explicitly defined.
+ */
+
+@layer tokens {
+    :root {
+        /* Literal color palette - OKLCH format */
+        /* These are never used directly in components, only for defining semantic colors */
+        --literal-black: oklch(0.156 0.01 92.4);
+        --literal-white: oklch(0.99 0 0);
+        --literal-gold: oklch(0.8116 0.1092 97.74);
+        --literal-gold-light: oklch(0.9382 0.1092 97.74);
+        --literal-gold-dark: oklch(0.4822 0.0794 100.95);
+        --literal-gold-darkest: oklch(0.411 0.0794 100.95);
+
+        /* Literal grayscale */
+        --literal-gray-100: oklch(0.95 0 0);
+        --literal-gray-200: oklch(0.85 0 0);
+        --literal-gray-300: oklch(0.6 0 0);
+        --literal-gray-400: oklch(0.48 0 0);
+        --literal-gray-500: oklch(0.36 0 0);
+        --literal-gray-600: oklch(0.28 0 0);
+        --literal-gray-700: oklch(0.2 0 0);
+        --literal-gray-800: oklch(0.12 0 0);
+
+        /* Literal cream/warm tones for light mode */
+        --literal-cream-100: oklch(0.98 0.01 85);
+        --literal-cream-200: oklch(0.95 0.01 85);
+        --literal-cream-300: oklch(0.9 0.02 85);
+        --literal-cream-border: oklch(0.88 0.01 85);
+        --literal-cream-border-medium: oklch(0.8 0.02 85);
+
+        /* Literal semantic state colors */
+        --literal-error: oklch(0.55 0.22 25);
+        --literal-error-light: oklch(0.92 0.08 25);
+        --literal-success: oklch(0.65 0.17 145);
+        --literal-success-light: oklch(0.92 0.08 145);
+        --literal-warning: oklch(0.72 0.15 70);
+        --literal-warning-light: oklch(0.92 0.08 70);
+    }
+
+    /* System default (light) - explicit definition */
+    :root {
+        /* Background colors */
+        --color-background: var(--literal-cream-100);
+        --color-background-secondary: var(--literal-cream-300);
+        --color-background-tertiary: var(--literal-cream-400);
+
+        /* Foreground/text colors */
+        --color-foreground: var(--literal-gray-800);
+        --color-foreground-secondary: var(--literal-gray-600);
+        --color-foreground-tertiary: var(--literal-gray-500);
+        --color-foreground-inverse: var(--literal-gray-100);
+
+        /* Primary brand color (gold in light mode is darker for contrast) */
+        --color-primary: var(--literal-gold-darkest);
+        --color-primary-hover: var(--literal-gold-dark);
+        --color-primary-contrast: var(--literal-white);
+
+        /* Border colors */
+        --color-border: var(--literal-cream-border-medium);
+        --color-border-subtle: var(--literal-cream-border);
+        --color-border-strong: var(--literal-gold-darkest);
+
+        /* Focus color */
+        --color-focus: var(--literal-gold-darkest);
+
+        /* State colors */
+        --color-error: var(--literal-error);
+        --color-error-background: var(--literal-error-light);
+        --color-success: var(--literal-success);
+        --color-success-background: var(--literal-success-light);
+        --color-warning: var(--literal-warning);
+        --color-warning-background: var(--literal-warning-light);
+    }
+
+    /* System dark mode */
+    @media (prefers-color-scheme: dark) {
+        :root:not([data-theme="light"]) {
+            /* Background colors */
+            --color-background: var(--literal-black);
+            --color-background-secondary: var(--literal-gray-800);
+            --color-background-tertiary: var(--literal-gray-700);
+
+            /* Foreground/text colors */
+            --color-foreground: var(--literal-gray-200);
+            --color-foreground-secondary: var(--literal-gray-300);
+            --color-foreground-tertiary: var(--literal-gray-400);
+            --color-foreground-inverse: var(--literal-black);
+
+            /* Primary brand color (gold in dark mode is brighter) */
+            --color-primary: var(--literal-gold);
+            --color-primary-hover: var(--literal-gold-light);
+            --color-primary-contrast: var(--literal-black);
+
+            /* Border colors */
+            --color-border: var(--literal-gray-500);
+            --color-border-subtle: var(--literal-gray-800);
+            --color-border-strong: var(--literal-gold);
+
+            /* Focus color */
+            --color-focus: var(--literal-gold);
+
+            /* State colors remain the same */
+            --color-error: var(--literal-error);
+            --color-error-background: var(--literal-error-light);
+            --color-success: var(--literal-success);
+            --color-success-background: var(--literal-success-light);
+            --color-warning: var(--literal-warning);
+            --color-warning-background: var(--literal-warning-light);
+        }
+    }
+
+    /* Forced light mode */
+    :root[data-theme="light"] {
+        /* Background colors */
+        --color-background: var(--literal-cream-100);
+        --color-background-secondary: var(--literal-cream-200);
+        --color-background-tertiary: var(--literal-cream-300);
+
+        /* Foreground/text colors */
+        --color-foreground: var(--literal-gray-800);
+        --color-foreground-secondary: var(--literal-gray-600);
+        --color-foreground-tertiary: var(--literal-gray-500);
+        --color-foreground-inverse: var(--literal-gray-100);
+
+        /* Primary brand color */
+        --color-primary: var(--literal-gold-darkest);
+        --color-primary-hover: var(--literal-gold-dark);
+        --color-primary-contrast: var(--literal-white);
+
+        /* Border colors */
+        --color-border: var(--literal-cream-border-medium);
+        --color-border-subtle: var(--literal-cream-border);
+        --color-border-strong: var(--literal-gold-darkest);
+
+        /* Focus color */
+        --color-focus: var(--literal-gold-darkest);
+
+        /* State colors */
+        --color-error: var(--literal-error);
+        --color-error-background: var(--literal-error-light);
+        --color-success: var(--literal-success);
+        --color-success-background: var(--literal-success-light);
+        --color-warning: var(--literal-warning);
+        --color-warning-background: var(--literal-warning-light);
+    }
+
+    /* Forced dark mode */
+    :root[data-theme="dark"] {
+        /* Background colors */
+        --color-background: var(--literal-black);
+        --color-background-secondary: var(--literal-gray-800);
+        --color-background-tertiary: var(--literal-gray-700);
+
+        /* Foreground/text colors */
+        --color-foreground: var(--literal-gray-200);
+        --color-foreground-secondary: var(--literal-gray-300);
+        --color-foreground-tertiary: var(--literal-gray-400);
+        --color-foreground-inverse: var(--literal-black);
+
+        /* Primary brand color */
+        --color-primary: var(--literal-gold);
+        --color-primary-hover: var(--literal-gold-light);
+        --color-primary-contrast: var(--literal-black);
+
+        /* Border colors */
+        --color-border: var(--literal-gray-500);
+        --color-border-subtle: var(--literal-gray-800);
+        --color-border-strong: var(--literal-gold);
+
+        /* State colors */
+        --color-error: var(--literal-error);
+        --color-error-background: var(--literal-error-light);
+        --color-success: var(--literal-success);
+        --color-success-background: var(--literal-success-light);
+        --color-warning: var(--literal-warning);
+        --color-warning-background: var(--literal-warning-light);
+    }
+}

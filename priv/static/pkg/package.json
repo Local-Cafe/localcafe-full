@@ -1,0 +1,15 @@
+{
+  "name": "image_processor_wasm_web_component",
+  "type": "module",
+  "version": "0.1.0",
+  "files": [
+    "image_processor_wasm_web_component_bg.wasm",
+    "image_processor_wasm_web_component.js",
+    "image_processor_wasm_web_component.d.ts"
+  ],
+  "main": "image_processor_wasm_web_component.js",
+  "types": "image_processor_wasm_web_component.d.ts",
+  "sideEffects": [
+    "./snippets/*"
+  ]
+}
