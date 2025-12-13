@@ -1,0 +1,36 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Register for an account</h1>
+  </.title>
+
+  <div class="auth-container">
+    <div class="auth-header">
+      <p class="auth-subtitle">
+        Already registered?
+        <.link navigate={~p"/users/log-in"}>Log in</.link>
+        to your account now.
+      </p>
+    </div>
+
+    <.form :let={f} for={@changeset} action={~p"/users/register"} class="auth-form">
+      <.input
+        field={f[:email]}
+        type="email"
+        label="Email"
+        placeholder="your@email.com"
+        required
+      />
+
+      <.button phx-disable-with="Creating account..." class="btn-primary btn-auth">
+        Create an account
+      </.button>
+    </.form>
+  </div>
+</Layouts.app>

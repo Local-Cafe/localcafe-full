@@ -1,0 +1,54 @@
+<.form :let={f} for={@changeset} action={@action}>
+  <.input
+    field={f[:tagline]}
+    type="text"
+    label="Tagline"
+    placeholder="Welcome to Local Cafe"
+    hint="The tagline to display over the hero image"
+    required
+  />
+
+  <.input
+    field={f[:position]}
+    type="number"
+    label="Position"
+    placeholder="0"
+    hint="Used to order slides (lower numbers appear first)"
+  />
+
+  <div class="form-section">
+    <h3 class="section-title">Hero Image</h3>
+    <p class="section-description">
+      Add a single image for this hero slide. Recommended size: 1920x1080 or larger for best quality.
+    </p>
+    <%
+    # Convert single image map to array format for the component
+    image_data = case Phoenix.HTML.Form.input_value(f, :image) do
+      nil -> []
+      %{} = img when map_size(img) == 0 -> []
+      %{full_url: full_url, thumb_url: thumb_url, filename: filename} when not is_nil(full_url) ->
+        [%{full_url: full_url, thumb_url: thumb_url, filename: filename, is_primary: true, position: 0}]
+      _ -> []
+    end
+    %>
+    <post-image-manager
+      form-name="hero_slide"
+      max-images="1"
+      images-data={Jason.encode!(image_data)}
+    >
+    </post-image-manager>
+  </div>
+
+  <.input
+    field={f[:active]}
+    type="checkbox"
+    label="Active (shown on home page)"
+  />
+
+  <footer>
+    <.button variant="primary">
+      {if @changeset.data.id, do: "Update Hero Slide", else: "Create Hero Slide"}
+    </.button>
+    <.button href={~p"/admin/hero-slides"}>Cancel</.button>
+  </footer>
+</.form>

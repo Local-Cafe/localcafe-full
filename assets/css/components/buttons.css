@@ -1,0 +1,163 @@
+/**
+ * Button Components
+ *
+ * Styles for .button class used by the button component in core_components.ex.
+ */
+
+@layer components {
+    .btn {
+        /* Layout */
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+        padding: var(--spacing-xs) var(--spacing-md);
+
+        /* Typography */
+        font-family: var(--font-display);
+        font-size: var(--size-step--2);
+        font-weight: var(--font-weight-bold);
+        line-height: var(--leading-flat);
+        text-decoration: none;
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        white-space: nowrap;
+
+        /* Visual - Sharp edges, prominent borders */
+        background-color: var(--color-background-secondary);
+        color: var(--color-primary);
+        border: var(--border-width) var(--border-style) var(--color-primary);
+        cursor: pointer;
+        user-select: none;
+
+        /* Transitions */
+        transition: all var(--transition-base) var(--transition-timing);
+
+        /* States */
+        &:hover {
+            color: var(--color-primary-hover);
+            border-color: var(--color-primary-hover);
+            background-color: var(--color-background-tertiary);
+        }
+
+        &:active {
+            background-color: var(--color-background-tertiary);
+        }
+
+        &:focus-visible {
+            outline-offset: var(--focus-ring-offset);
+        }
+
+        &:disabled,
+        &[disabled] {
+            opacity: 0.3;
+            cursor: not-allowed;
+            pointer-events: none;
+        }
+    }
+    .btn-primary {
+        width: 100%;
+        padding: var(--space-4);
+        font-size: var(--text-base);
+        font-weight: var(--font-semibold);
+        color: var(--color-background);
+        background: var(--color-primary);
+        border: none;
+
+        cursor: pointer;
+        transition: background-color 0.2s ease;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: var(--space-2);
+    }
+
+    .btn-primary :hover:not(:disabled) {
+        background: var(--color-primary);
+    }
+
+    .btn-primary :disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-primary :focus-visible {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+    }
+
+    .btn-danger {
+        padding: var(--space-3) var(--space-4);
+        font-size: var(--text-sm);
+        font-weight: var(--font-semibold);
+        color: var(--color-background);
+        background: var(--color-error);
+        border: var(--border-width-medium) solid var(--color-error);
+        cursor: pointer;
+        transition: all 0.2s ease;
+    }
+
+    .btn-danger:hover:not(:disabled) {
+        background: var(--color-error-dark, oklch(0.45 0.15 25));
+        border-color: var(--color-error-dark, oklch(0.45 0.15 25));
+        transform: translate(-2px, -2px);
+        box-shadow: 2px 2px 0 var(--color-error);
+    }
+
+    .btn-danger:disabled {
+        opacity: 0.6;
+        cursor: not-allowed;
+    }
+
+    .btn-danger:focus-visible {
+        outline: var(--focus-ring-width) solid var(--focus-ring-color);
+        outline-offset: var(--focus-ring-offset);
+    }
+
+    .btn-spinner {
+        width: 20px;
+        height: 20px;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        border-top-color: white;
+        border-radius: 50%;
+        animation: spin 0.6s linear infinite;
+    }
+
+    @keyframes spin {
+        to {
+            transform: rotate(360deg);
+        }
+    }
+
+    /* Navigation Button Variant */
+    .btn-nav {
+        width: auto;
+        padding: var(--space-2) var(--space-4);
+        font-size: var(--text-sm);
+        font-weight: var(--font-semibold);
+        border-radius: var(--radius-md);
+        white-space: nowrap;
+    }
+
+    .btn-secondary.btn-nav {
+        color: var(--color-text-primary);
+        background: var(--color-background);
+        border: 1px solid var(--color-border);
+    }
+
+    .btn-secondary.btn-nav:hover {
+        background: var(--color-background-secondary);
+        border-color: var(--color-border-strong);
+    }
+
+    .btn-primary.btn-nav {
+        color: white;
+        background: var(--color-primary);
+        border: 1px solid var(--color-primary);
+    }
+
+    .btn-primary.btn-nav:hover {
+        background: var(--color-primary-hover);
+        border-color: var(--color-primary-hover);
+    }
+}

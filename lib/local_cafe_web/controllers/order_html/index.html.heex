@@ -1,0 +1,21 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>My Orders</h1>
+  </.title>
+
+  <div :if={length(@orders) == 0} class="empty-state">
+    <p>You haven't placed any orders yet.</p>
+    <.button href={~p"/#menu"}>Browse Menu</.button>
+  </div>
+
+  <div :if={length(@orders) > 0} class="orders-list">
+    <.order_card :for={order <- @orders} order={order} />
+  </div>
+</Layouts.app>

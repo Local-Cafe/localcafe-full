@@ -1,0 +1,192 @@
+/**
+ * Admin Dashboard Component
+ * Overview dashboard for admins
+ */
+
+@layer components {
+    .admin-dashboard-page {
+        display: flex;
+        gap: var(--space-6);
+        max-width: var(--container-2xl); /* 1400px */
+        width: 100%;
+        margin: auto;
+    }
+
+    /* Sidebar Navigation */
+    .admin-sidebar {
+        flex-shrink: 0;
+        width: 200px;
+    }
+
+    .admin-nav {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+
+    .admin-nav-link {
+        display: block;
+        padding: var(--space-3);
+        text-decoration: none;
+        font-weight: var(--font-medium);
+        transition: all var(--transition-fast);
+        background-color: var(--color-background-secondary);
+
+        &:hover {
+            background-color: var(--color-background-tertiary);
+        }
+
+        &:active {
+            background-color: var(--color-background-tertiary);
+        }
+    }
+
+    /* Main Content Area */
+    .admin-main {
+        flex: 1;
+        min-width: 0;
+    }
+
+    /* Statistics Grid */
+    .stats-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: var(--space-4);
+    }
+
+    @media (max-width: 768px) {
+        .admin-dashboard-page {
+            flex-direction: column;
+        }
+
+        .admin-sidebar {
+            width: 100%;
+        }
+
+        .admin-nav {
+            flex-direction: row;
+            flex-wrap: wrap;
+        }
+
+        .admin-nav-link {
+            flex: 1;
+            min-width: 150px;
+            text-align: center;
+        }
+    }
+
+    /* Stat Card */
+    .stat-card {
+        background-color: var(--color-background-secondary);
+
+        padding: var(--space-5);
+        transition: all var(--transition-base);
+
+        &:hover {
+            background-color: var(--color-background-tertiary);
+        }
+    }
+
+    .stat-card-wide {
+        grid-column: span 2;
+    }
+
+    @media (max-width: 767px) {
+        .stat-card-wide {
+            grid-column: span 1;
+        }
+    }
+
+    /* Card Header */
+    .stat-card-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-3);
+    }
+
+    .stat-card-title {
+        font-size: var(--size-step-1);
+        font-weight: var(--font-bold);
+        margin: 0;
+    }
+
+    .stat-card-link {
+        text-decoration: none;
+        font-size: var(--size-step--1);
+        font-weight: var(--font-medium);
+        padding: var(--space-1) var(--space-2);
+
+        transition: all var(--transition-fast);
+
+        &:hover {
+            background-color: var(--color-background);
+            text-decoration: underline;
+        }
+
+        &:active {
+            background-color: var(--color-background);
+        }
+    }
+
+    /* Card Body */
+    .stat-card-body {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .stat-description {
+        line-height: var(--leading-relaxed);
+        margin: 0;
+    }
+
+    /* Primary Stat */
+    .stat-primary {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+
+    .stat-value {
+        font-size: var(--size-step-4);
+        font-weight: var(--font-bold);
+        line-height: 1;
+    }
+
+    .stat-label {
+        font-size: var(--size-step--1);
+        font-weight: var(--font-medium);
+    }
+
+    /* Breakdown Stats */
+    .stat-breakdown {
+        display: flex;
+        gap: var(--space-4);
+        flex-wrap: wrap;
+    }
+
+    .stat-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+    }
+
+    .stat-item-value {
+        font-size: var(--size-step-2);
+        font-weight: var(--font-bold);
+        line-height: 1;
+    }
+
+    .stat-item-label {
+        font-size: var(--size-step--2);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    /*
+    .stat-item-warning .stat-item-value {
+    }
+    */
+}

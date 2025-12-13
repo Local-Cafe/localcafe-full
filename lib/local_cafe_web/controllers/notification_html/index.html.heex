@@ -1,0 +1,67 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Notifications</h1>
+  </.title>
+
+  <div class="notifications-page">
+    <div class="notifications-header">
+      <%= if @notifications != [] do %>
+        <div class="notifications-header-actions">
+          <%= if Enum.any?(@notifications, & is_nil(&1.viewed_at)) do %>
+            <.form :let={_f} for={%{}} action={~p"/notifications/mark-all-viewed"} method="post">
+              <.button variant="secondary" class="btn-sm">
+                Mark All as Read
+              </.button>
+            </.form>
+          <% end %>
+          <.form :let={_f} for={%{}} action={~p"/notifications/delete-all"} method="post">
+            <.button variant="danger" class="btn-sm">
+              Delete All
+            </.button>
+          </.form>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="notifications-list">
+      <%= if @notifications == [] do %>
+        <div class="empty-notifications">
+          <p>No notifications yet.</p>
+        </div>
+      <% else %>
+        <%= for notification <- @notifications do %>
+          <div class={[
+            "notification-card",
+            if(is_nil(notification.viewed_at),
+              do: "notification-unread",
+              else: "notification-read"
+            )
+          ]}>
+            <div class="notification-content">
+              <%= if is_nil(notification.viewed_at) do %>
+                <span class="notification-badge">New</span>
+              <% end %>
+              <h3 class="notification-title">{notification.title}</h3>
+              <p class="notification-body">{notification.body}</p>
+              <time class="notification-time" datetime={notification.inserted_at}>
+                {Calendar.strftime(notification.inserted_at, "%B %d, %Y at %I:%M %p")}
+              </time>
+            </div>
+            <div class="notification-actions">
+              <.link href={~p"/notifications/#{notification}/view"} class="btn btn-primary btn-sm">
+                View
+              </.link>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</Layouts.app>

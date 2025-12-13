@@ -1,0 +1,103 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>{@post.title}</h1>
+  </.title>
+
+  <div class="post-paywall">
+    <!-- Stripe publishable key stored in hidden element -->
+    <div id="stripe-publishable-key" data-key={@publishable_key} style="display: none;"></div>
+    <div
+      id="post-data"
+      data-post-id={@post.id}
+      data-post-slug={@post.slug}
+      data-post-price={@post.price}
+      style="display: none;"
+    >
+    </div>
+
+    <div class="paywall-message">
+      <div class="paywall-icon">
+        <svg
+          width="64"
+          height="64"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+
+      <h2>Premium Content</h2>
+
+      <p class="paywall-description">{@post.description}</p>
+
+      <div class="paywall-price">
+        ${float_to_currency(@post.price)}
+      </div>
+
+      <p class="purchase-info">
+        Get instant access to this premium content. Your purchase includes lifetime access to this post.
+      </p>
+      
+<!-- Initial purchase button (shown before payment form) -->
+      <div class="paywall-actions">
+        <button id="initialize-purchase-button" class="btn-primary ">
+          Proceed to Purchase
+        </button>
+        <a href="/posts" class="btn-secondary">Back to Posts</a>
+      </div>
+      
+<!-- Error display area -->
+      <div id="payment-errors" class="payment-errors" role="alert"></div>
+      
+<!-- Payment form (hidden until user clicks purchase button) -->
+      <div id="payment-form-container" style="display: none;">
+        <form id="post-purchase-form" class="post-purchase-form">
+          <div class="form-section">
+            <h3>Complete Purchase</h3>
+
+            <div class="form-field">
+              <label for="payment-element">Payment Information</label>
+              <div id="payment-element" class="payment-element">
+                <!-- Stripe Payment Element will be inserted here -->
+              </div>
+            </div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit" id="submit-button" class="btn-primary ">
+              <span id="btn-text">
+                Pay  ${float_to_currency(@post.price)}
+              </span>
+              <span id="btn-spinner" class="btn-spinner" style="display: none;"></span>
+            </button>
+            <a href="/posts" class="btn-secondary">Cancel</a>
+          </div>
+        </form>
+      </div>
+
+      <div class="paywall-security">
+        <p>
+          <svg class="icon" width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+            <path d="M8 0L2 3v5c0 4.5 3.5 7 6 8 2.5-1 6-3.5 6-8V3L8 0z" />
+          </svg>
+          Secure payment powered by Stripe
+        </p>
+      </div>
+    </div>
+
+    <div class="paywall-back">
+      <a href="/posts" class="back-link">← Back to all posts</a>
+    </div>
+  </div>
+</Layouts.app>

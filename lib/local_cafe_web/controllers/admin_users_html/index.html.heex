@@ -1,0 +1,132 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>User Management</h1>
+  </.title>
+
+  <div class="content-container">
+    <%!-- Filter Tabs --%>
+    <div class="user-filters">
+      <.link
+        navigate={~p"/admin/users?filter=all"}
+        class={["filter-tab", if(@filter == "all", do: "filter-tab-active", else: "")]}
+      >
+        All Users
+      </.link>
+      <.link
+        navigate={~p"/admin/users?filter=admin"}
+        class={["filter-tab", if(@filter == "admin", do: "filter-tab-active", else: "")]}
+      >
+        Admins
+      </.link>
+      <.link
+        navigate={~p"/admin/users?filter=trusted"}
+        class={["filter-tab", if(@filter == "trusted", do: "filter-tab-active", else: "")]}
+      >
+        Trusted
+      </.link>
+      <.link
+        navigate={~p"/admin/users?filter=regular"}
+        class={["filter-tab", if(@filter == "regular", do: "filter-tab-active", else: "")]}
+      >
+        Regular
+      </.link>
+    </div>
+
+    <%!-- User Count --%>
+    <div class="user-count">
+      Total: {length(@users)} {if length(@users) == 1, do: "user", else: "users"}
+    </div>
+
+    <%!-- Users List --%>
+    <div class="admin-users-list">
+      <%= if @users == [] do %>
+        <div class="empty-users">
+          <p>No users found.</p>
+        </div>
+      <% else %>
+        <%= for user <- @users do %>
+          <div class="admin-user-card">
+            <div class="user-info">
+              <div class="user-email">{user.email}</div>
+              <div class="user-meta">
+                <span class="user-date">
+                  Joined: {Calendar.strftime(user.inserted_at, "%B %d, %Y")}
+                </span>
+                <%= if user.confirmed_at do %>
+                  <span class="user-separator">·</span>
+                  <span class="user-confirmed">Confirmed</span>
+                <% else %>
+                  <span class="user-separator">·</span>
+                  <span class="user-unconfirmed">Unconfirmed</span>
+                <% end %>
+                <span class="user-separator">·</span>
+                <span class="user-comment-count">
+                  {user.comment_count} {if user.comment_count == 1,
+                    do: "comment",
+                    else: "comments"}
+                </span>
+              </div>
+            </div>
+
+            <div class="user-badges">
+              <%= if user.admin do %>
+                <span class="user-badge user-badge-admin">Admin</span>
+              <% end %>
+              <%= if user.trusted do %>
+                <span class="user-badge user-badge-trusted">Trusted</span>
+              <% end %>
+              <%= if !user.admin && !user.trusted do %>
+                <span class="user-badge user-badge-regular">Regular</span>
+              <% end %>
+            </div>
+
+            <div class="user-actions">
+              <%!-- View Comments --%>
+              <%= if user.comment_count > 0 do %>
+                <.link
+                  navigate={~p"/admin/comments?user_id=#{user.id}"}
+                  class="btn btn-sm btn-secondary"
+                >
+                  View Comments
+                </.link>
+              <% end %>
+
+              <%!-- Toggle Admin --%>
+              <%= if @current_scope.user.id != user.id do %>
+                <.form
+                  :let={_f}
+                  for={%{}}
+                  action={~p"/admin/users/#{user.id}/toggle-admin"}
+                  method="post"
+                >
+                  <.button class={if user.admin, do: "btn-sm btn-secondary", else: "btn-sm"}>
+                    {if user.admin, do: "Remove Admin", else: "Make Admin"}
+                  </.button>
+                </.form>
+              <% end %>
+
+              <%!-- Toggle Trusted --%>
+              <.form
+                :let={_f}
+                for={%{}}
+                action={~p"/admin/users/#{user.id}/toggle-trusted"}
+                method="post"
+              >
+                <.button class="btn-sm btn-secondary">
+                  {if user.trusted, do: "Remove Trusted", else: "Mark Trusted"}
+                </.button>
+              </.form>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</Layouts.app>

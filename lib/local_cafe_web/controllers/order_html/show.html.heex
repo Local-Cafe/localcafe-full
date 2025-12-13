@@ -1,0 +1,64 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Order Details</h1>
+  </.title>
+
+  <div class="order-detail">
+    <div class="order-detail-header">
+      <div class="order-detail-info">
+        <h2 class="order-number">{@order.order_number}</h2>
+        <span class={"order-status " <> status_class(@order.status)}>
+          {format_status(@order.status)}
+        </span>
+      </div>
+      <div class="order-detail-meta">
+        <p class="order-date">
+          <strong>Placed:</strong> {format_datetime(@order.inserted_at)}
+        </p>
+        <p :if={@order.completed_at} class="order-completed">
+          <strong>Completed:</strong> {format_datetime(@order.completed_at)}
+        </p>
+        <p :if={@order.cancelled_at} class="order-cancelled">
+          <strong>Cancelled:</strong> {format_datetime(@order.cancelled_at)}
+        </p>
+      </div>
+    </div>
+
+    <div :if={@order.customer_note} class="order-note">
+      <h3>Order Note</h3>
+      <p>{@order.customer_note}</p>
+    </div>
+
+    <div class="order-items">
+      <h3>Items</h3>
+      <.line_item :for={item <- @order.line_items} item={item} />
+    </div>
+
+    <div class="order-total">
+      <div class="total-row">
+        <span class="total-label">Subtotal</span>
+        <span class="total-amount">{format_price(@order.subtotal)}</span>
+      </div>
+    </div>
+
+    <div class="order-actions">
+      <.button
+        :if={can_cancel?(@order)}
+        href={~p"/my-orders/#{@order}/cancel"}
+        data-method="post"
+        data-confirm="Are you sure you want to cancel this order?"
+        class="btn-danger"
+      >
+        Cancel Order
+      </.button>
+      <.button href={~p"/my-orders"} variant="secondary">Back to Orders</.button>
+    </div>
+  </div>
+</Layouts.app>

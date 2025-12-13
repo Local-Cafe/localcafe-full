@@ -1,0 +1,52 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>{@post.title}</h1>
+  </.title>
+
+  <div class="post-paywall">
+    <div class="paywall-message">
+      <div class="paywall-icon">
+        <svg
+          width="64"
+          height="64"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+        >
+          <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+          <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+        </svg>
+      </div>
+
+      <h2>Premium Content</h2>
+
+      <p class="paywall-description">{@post.description}</p>
+
+      <div class="paywall-price">
+        ${float_to_currency(@post.price)}
+      </div>
+
+      <p class="paywall-login-message">
+        Please <a href="/users/log-in" class="paywall-link">log in</a>
+        to purchase and view this post.
+      </p>
+
+      <div class="paywall-actions">
+        <a href="/users/log-in" class="btn-primary ">Log In</a>
+        <a href="/users/register" class="btn-secondary">Create Account</a>
+      </div>
+    </div>
+
+    <div class="paywall-back">
+      <a href="/posts" class="back-link">← Back to all posts</a>
+    </div>
+  </div>
+</Layouts.app>

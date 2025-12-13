@@ -1,0 +1,123 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <:admin_bar>
+    <.button navigate={~p"/posts/new"}>
+      New Post
+    </.button>
+  </:admin_bar>
+
+  <.title>
+    <h1>
+      <%= cond do %>
+        <% assigns[:search_query] && assigns[:current_tag] -> %>
+          Post Search: {@search_query} in {@current_tag}
+        <% assigns[:search_query] -> %>
+          Post Search: {@search_query}
+        <% assigns[:current_tag] -> %>
+          Post Tag: {@current_tag}
+        <% true -> %>
+      <% end %>
+
+      <%= if assigns[:search_query] || assigns[:current_tag] do %>
+        ({@pagination.total_count})
+      <% else %>
+        News & Updates
+      <% end %>
+    </h1>
+  </.title>
+
+  <div class="blog-section">
+    <div class="blog-container">
+      <%!-- Search Form --%>
+      <div class="search-section">
+        <.form
+          for={%{}}
+          method="get"
+          action={if assigns[:current_tag], do: ~p"/posts/tags/#{@current_tag}", else: ~p"/posts"}
+        >
+          <div class="search-form">
+            <input
+              type="search"
+              name="q"
+              value={assigns[:search_query]}
+              placeholder="Search posts..."
+              class="search-input"
+            />
+            <button type="submit" class="btn btn-primary ">Search</button>
+            <%= if assigns[:search_query] && @search_query != "" do %>
+              <a
+                href={
+                  if assigns[:current_tag], do: ~p"/posts/tags/#{@current_tag}", else: ~p"/posts"
+                }
+                class="btn btn-secondary"
+              >
+                Clear
+              </a>
+            <% end %>
+          </div>
+        </.form>
+      </div>
+
+      <%= if @tag_counts != [] do %>
+        <div class="tags-section">
+          <div class="tags-list">
+            <a
+              href={~p"/posts"}
+              class={"tag #{if @current_tag == nil, do: "tag-active", else: ""}"}
+            >
+              All Posts
+            </a>
+            <%= for {tag, count} <- @tag_counts do %>
+              <a
+                href={~p"/posts/tags/#{tag}"}
+                class={"tag #{if @current_tag == tag, do: "tag-active", else: ""}"}
+              >
+                {tag} ({count})
+              </a>
+            <% end %>
+          </div>
+        </div>
+      <% end %>
+
+      <div class="blog-grid">
+        <%= for post <- @pagination.posts do %>
+          <.blog_card post={post} />
+        <% end %>
+      </div>
+
+      <.pagination
+        current_page={@pagination.page}
+        total_pages={@pagination.total_pages}
+        path={
+          fn page ->
+            query_params =
+              []
+              |> then(fn params -> [{"page", page} | params] end)
+              |> then(fn params ->
+                if assigns[:search_query] && @search_query != "" do
+                  [{"q", @search_query} | params]
+                else
+                  params
+                end
+              end)
+
+            base_path =
+              if assigns[:current_tag] do
+                ~p"/posts/tags/#{@current_tag}"
+              else
+                ~p"/posts"
+              end
+
+            URI.to_string(%URI{path: base_path, query: URI.encode_query(query_params)})
+          end
+        }
+      />
+    </div>
+  </div>
+</Layouts.app>

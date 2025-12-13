@@ -1,0 +1,22 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <:admin_bar>
+    <.button href={~p"/admin/hero-slides"} variant="secondary">
+      Back to Hero Slides
+    </.button>
+  </:admin_bar>
+
+  <.title>
+    <h1>Edit Hero Slide</h1>
+  </.title>
+
+  <div class="admin-container">
+    <._form changeset={@changeset} action={~p"/admin/hero-slides/#{@hero_slide.id}"} />
+  </div>
+</Layouts.app>

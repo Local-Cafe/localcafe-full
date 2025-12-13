@@ -1,0 +1,247 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Order Details</h1>
+  </.title>
+
+  <div class="admin-order-detail">
+    <div class="order-detail-header">
+      <div class="order-detail-info">
+        <h2 class="order-number">{@order.order_number}</h2>
+        <span class={"order-status " <> status_class(@order.status)}>
+          {format_status(@order.status)}
+        </span>
+      </div>
+      <div class="order-detail-meta">
+        <p class="order-date">
+          <strong>Placed:</strong> {format_datetime(@order.inserted_at)}
+        </p>
+        <p :if={@order.completed_at} class="order-completed">
+          <strong>Completed:</strong> {format_datetime(@order.completed_at)}
+        </p>
+        <p :if={@order.cancelled_at} class="order-cancelled">
+          <strong>Cancelled:</strong> {format_datetime(@order.cancelled_at)}
+        </p>
+      </div>
+    </div>
+
+    <%!-- Customer Information --%>
+    <div class="order-customer">
+      <h3>Customer Information</h3>
+      <%= if @order.user do %>
+        <p>
+          <strong>Type:</strong> Registered User
+        </p>
+        <p>
+          <strong>Name:</strong> {@order.user.name || @order.customer_name || "N/A"}
+        </p>
+        <p>
+          <strong>Email:</strong> {@order.user.email}
+        </p>
+      <% else %>
+        <p>
+          <strong>Type:</strong> Guest
+        </p>
+        <p>
+          <strong>Name:</strong> {@order.customer_name || "N/A"}
+        </p>
+        <p>
+          <strong>Email:</strong> {@order.customer_email || "N/A"}
+        </p>
+      <% end %>
+    </div>
+
+    <%!-- Order Notes --%>
+    <div :if={@order.customer_note} class="order-note">
+      <h3>Order Note</h3>
+      <p>{@order.customer_note}</p>
+    </div>
+
+    <%!-- Order Items --%>
+    <div class="order-items">
+      <h3>Items</h3>
+      <%= for item <- @order.line_items do %>
+        <div class="line-item">
+          <div class="line-item-header">
+            <h4 class="line-item-title">{item.item_title}</h4>
+            <span class="line-item-subtotal">{format_price(item.subtotal)}</span>
+          </div>
+          <div class="line-item-body">
+            <p :if={item.item_description} class="line-item-description">
+              {item.item_description}
+            </p>
+            <div class="line-item-details">
+              <p class="line-item-price">
+                <span class="label">Base price:</span>
+                <span :if={item.base_price_label} class="price-label">
+                  {item.base_price_label} -
+                </span>
+                {format_price(item.base_price_amount)}
+              </p>
+              <div
+                :if={item.selected_variants && length(item.selected_variants) > 0}
+                class="line-item-variants"
+              >
+                <p class="label">Options:</p>
+                <ul class="variant-list">
+                  <li :for={variant <- item.selected_variants} class="variant-item">
+                    {variant.name}
+                    <span :if={variant.price > 0} class="variant-price">
+                      +{format_price(variant.price)}
+                    </span>
+                    <span :if={variant.price == 0} class="variant-price-free">
+                      (free)
+                    </span>
+                  </li>
+                </ul>
+              </div>
+              <p :if={item.customer_note} class="line-item-note">
+                <span class="label">Note:</span> {item.customer_note}
+              </p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <%!-- Order Total --%>
+    <div class="order-total">
+      <div class="total-row">
+        <span class="total-label">Subtotal</span>
+        <span class="total-amount">{format_price(@order.subtotal)}</span>
+      </div>
+    </div>
+
+    <%!-- Payment Information --%>
+    <%= if @payment do %>
+      <div class="order-payment">
+        <h3>Payment Information</h3>
+        <div class="payment-details">
+          <p>
+            <strong>Status:</strong>
+            <span class={"payment-status " <> payment_status_class(@payment.status)}>
+              {format_payment_status(@payment.status)}
+            </span>
+          </p>
+          <p>
+            <strong>Amount:</strong> {format_price(@payment.amount)}
+          </p>
+          <%= if @payment.tip_amount && @payment.tip_amount > 0 do %>
+            <p>
+              <strong>Tip:</strong> {format_price(@payment.tip_amount)}
+            </p>
+          <% end %>
+          <%= if @payment.amount_refunded && @payment.amount_refunded > 0 do %>
+            <p class="refund-info">
+              <strong>Refunded:</strong>
+              <span class="refund-amount">{format_price(@payment.amount_refunded)}</span>
+            </p>
+          <% end %>
+          <%= if @payment.card_brand && @payment.card_last4 do %>
+            <p>
+              <strong>Payment Method:</strong>
+              {String.capitalize(@payment.card_brand)} ending in {String.upcase(@payment.card_last4)}
+            </p>
+          <% end %>
+        </div>
+
+        <%!-- Refund Action --%>
+        <%= if payment_can_be_refunded?(@payment) do %>
+          <div class="payment-actions">
+            <.form
+              for={%{}}
+              action={~p"/admin/orders/#{@order}/refund"}
+              method="post"
+              data-confirm="Are you sure you want to refund this order? This action cannot be undone."
+            >
+              <.button type="submit" variant="danger">
+                Refund Order
+              </.button>
+            </.form>
+          </div>
+        <% end %>
+      </div>
+    <% else %>
+      <div class="order-payment">
+        <h3>Payment Information</h3>
+        <p class="no-payment">No payment found for this order.</p>
+      </div>
+    <% end %>
+
+    <%!-- Status History --%>
+    <div class="order-status-history">
+      <h3>Status History</h3>
+      <%= if @order.status_events && length(@order.status_events) > 0 do %>
+        <div class="status-timeline">
+          <%= for event <- Enum.reverse(@order.status_events) do %>
+            <div class="status-event">
+              <div class="status-event-header">
+                <span class={"status-badge " <> status_class(event["to_status"])}>
+                  <%= if event["from_status"] do %>
+                    {format_status(event["from_status"])} → {format_status(event["to_status"])}
+                  <% else %>
+                    Order created as {format_status(event["to_status"])}
+                  <% end %>
+                </span>
+                <span class="status-event-time">
+                  <%= case DateTime.from_iso8601(event["changed_at"]) do %>
+                    <% {:ok, dt, _offset} -> %>
+                      {format_datetime(dt)}
+                    <% _ -> %>
+                      {event["changed_at"]}
+                  <% end %>
+                </span>
+              </div>
+              <div class="status-event-meta">
+                <span class="status-event-user">
+                  Changed by: {event["changed_by"]["email"] || "Unknown"}
+                  <%= if event["changed_by"]["admin"] do %>
+                    <span class="admin-badge">Admin</span>
+                  <% end %>
+                </span>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="no-events">No status history available</p>
+      <% end %>
+    </div>
+
+    <%!-- Status Management --%>
+    <div class="order-status-management">
+      <h3>Update Order Status</h3>
+      <p class="current-status">
+        Current Status:
+        <span class={"order-status " <> status_class(@order.status)}>
+          {format_status(@order.status)}
+        </span>
+      </p>
+      <div class="status-buttons">
+        <%= for {label, value} <- order_statuses() do %>
+          <.form for={%{}} action={~p"/admin/orders/#{@order}/update-status"} method="post">
+            <input type="hidden" name="status" value={value} />
+            <.button
+              type="submit"
+              variant={if @order.status == value, do: "primary", else: "secondary"}
+              disabled={@order.status == value}
+            >
+              {label}
+            </.button>
+          </.form>
+        <% end %>
+      </div>
+    </div>
+
+    <%!-- Actions --%>
+    <div class="order-actions">
+      <.button href={~p"/admin/orders"} variant="secondary">Back to Orders</.button>
+    </div>
+  </div>
+</Layouts.app>

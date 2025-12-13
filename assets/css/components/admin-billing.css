@@ -1,0 +1,499 @@
+/**
+ * Admin Billing Component
+ * Payment and revenue management interface for admins
+ */
+
+@layer components {
+    .admin-billing-page {
+        max-width: var(--container-2xl); /* 1400px */
+        margin: auto;
+    }
+
+    /* Revenue Stats */
+    .billing-stats {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+        gap: var(--space-4);
+        margin: var(--space-6) 0;
+    }
+
+    .billing-stat {
+        padding: var(--space-4);
+        background-color: var(--color-background-secondary);
+
+        text-align: center;
+    }
+
+    .billing-stat-pending {
+        border: 2px solid var(--color-warning);
+    }
+
+    .billing-stat-refunded {
+        border: 2px solid var(--color-error);
+    }
+
+    .billing-stat-net {
+        border: 2px solid var(--color-success);
+    }
+
+    .stat-label {
+        font-size: var(--size-step--1);
+        font-weight: var(--font-medium);
+        color: var(--color-foreground-secondary);
+        margin-bottom: var(--space-2);
+    }
+
+    .stat-value {
+        font-size: var(--size-step-2);
+        font-weight: var(--font-bold);
+        color: var(--color-foreground);
+    }
+
+    .stat-value-primary {
+        color: var(--color-success);
+    }
+
+    .stat-meta {
+        margin-top: var(--space-2);
+        font-size: var(--size-step--2);
+        color: var(--color-foreground-secondary);
+    }
+
+    /* Filter Tabs */
+    .payment-filters {
+        display: flex;
+        gap: var(--space-2);
+        margin: var(--space-6) 0;
+    }
+
+    /* Payment Count */
+    .payment-count {
+        margin: var(--space-4) 0;
+        font-size: var(--size-step--1);
+        font-weight: var(--font-medium);
+    }
+
+    /* Empty State */
+    .empty-payments {
+        padding: var(--space-12);
+        text-align: center;
+        background-color: var(--color-background-secondary);
+    }
+
+    /* Payments List */
+    .payments-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-3);
+        margin-top: var(--space-6);
+    }
+
+    /* Payment Card */
+    .payment-card {
+        background-color: var(--color-background-secondary);
+
+        overflow: hidden;
+        transition: all var(--transition-base);
+
+        &:hover {
+            background-color: var(--color-background-tertiary);
+        }
+    }
+
+    .payment-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-4);
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .payment-status-container {
+        display: flex;
+        align-items: center;
+    }
+
+    .payment-date {
+        font-size: var(--size-step--1);
+        color: var(--color-foreground-secondary);
+    }
+
+    .payment-body {
+        padding: var(--space-4);
+        display: grid;
+        grid-template-columns: 1fr auto;
+        gap: var(--space-4);
+        align-items: start;
+    }
+
+    .payment-customer-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .payment-customer {
+        font-weight: var(--font-medium);
+        font-size: var(--size-step-0);
+    }
+
+    .payment-method {
+        font-size: var(--size-step--1);
+        color: var(--color-foreground-secondary);
+        font-family: var(--font-mono);
+    }
+
+    .payment-amounts {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        text-align: right;
+    }
+
+    .payment-amount-item {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        gap: var(--space-3);
+    }
+
+    .amount-label {
+        font-size: var(--size-step--1);
+        color: var(--color-foreground-secondary);
+    }
+
+    .amount-value {
+        font-family: var(--font-mono);
+        font-weight: var(--font-bold);
+        font-size: var(--size-step-0);
+    }
+
+    .amount-total {
+        color: var(--color-foreground);
+    }
+
+    .amount-fee {
+        color: var(--color-error);
+    }
+
+    .amount-net {
+        color: var(--color-success);
+    }
+
+    .payment-footer {
+        padding: var(--space-3) var(--space-4);
+        background-color: var(--color-background-tertiary);
+        border-top: 1px solid var(--color-border);
+    }
+
+    .payment-stripe-id {
+        font-family: var(--font-mono);
+        font-size: var(--size-step--2);
+        color: var(--color-foreground-tertiary);
+    }
+
+    .payment-no-data {
+        color: var(--color-foreground-tertiary);
+    }
+
+    /* Status Badge */
+    .payment-status-badge {
+        display: inline-block;
+        padding: var(--space-1) var(--space-3);
+
+        font-size: var(--size-step--2);
+        font-weight: var(--font-bold);
+        text-transform: capitalize;
+        white-space: nowrap;
+    }
+
+    .payment-status-succeeded,
+    .payment-status-payment_intent\.succeeded,
+    .payment-status-charge\.succeeded {
+        background-color: var(--color-success-background);
+        color: var(--color-success);
+    }
+
+    .payment-status-processing,
+    .payment-status-payment_intent\.processing {
+        background-color: var(--color-warning-background);
+        color: var(--color-warning);
+    }
+
+    .payment-status-payment_intent\.created,
+    .payment-status-requires_payment_method,
+    .payment-status-requires_confirmation,
+    .payment-status-requires_action,
+    .payment-status-payment_intent\.requires_action {
+        background-color: var(--color-background-tertiary);
+        color: var(--color-foreground);
+    }
+
+    .payment-status-canceled,
+    .payment-status-payment_intent\.canceled,
+    .payment-status-payment_intent\.payment_failed,
+    .payment-status-charge\.failed {
+        background-color: var(--color-error-background);
+        color: var(--color-error);
+    }
+
+    .payment-status-charge\.refunded {
+        background-color: var(--color-warning-background);
+        color: var(--color-warning);
+        border: 1px solid var(--color-warning);
+    }
+
+    /* Payment Card Link */
+    .payment-card-link {
+        text-decoration: none;
+        color: inherit;
+        display: block;
+    }
+
+    .amount-refunded {
+        color: var(--color-error);
+    }
+
+    /* Payment Detail Page */
+    .payment-detail-page {
+        max-width: var(--container-xl); /* 1200px */
+        margin: auto;
+        padding: var(--space-6) 0;
+    }
+
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .back-link {
+        font-size: var(--size-step--1);
+        color: var(--color-primary-500);
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+        gap: var(--space-1);
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    /* Payment Summary Card */
+    .payment-summary-card {
+        background-color: var(--color-background-secondary);
+        margin-bottom: var(--space-6);
+    }
+
+    .payment-summary-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        padding: var(--space-6);
+        border-bottom: 1px solid var(--color-border);
+    }
+
+    .payment-summary-body {
+        padding: var(--space-6);
+        display: grid;
+        gap: var(--space-8);
+    }
+
+    /* Payment Detail Sections */
+    .payment-detail-section h3 {
+        font-size: var(--size-step-0);
+        font-weight: var(--font-bold);
+        margin-bottom: var(--space-4);
+        color: var(--color-foreground);
+    }
+
+    .payment-detail-list {
+        display: grid;
+        grid-template-columns: auto 1fr;
+        gap: var(--space-3) var(--space-6);
+        align-items: baseline;
+    }
+
+    .payment-detail-list dt {
+        font-weight: var(--font-medium);
+        color: var(--color-foreground-secondary);
+        font-size: var(--size-step--1);
+    }
+
+    .payment-detail-list dd {
+        color: var(--color-foreground);
+        font-size: var(--size-step-0);
+    }
+
+    .payment-detail-list code {
+        font-family: var(--font-mono);
+        font-size: var(--size-step--1);
+        background-color: var(--color-background-tertiary);
+        padding: var(--space-1) var(--space-2);
+        word-break: break-all;
+    }
+
+    .payment-detail-list a {
+        color: var(--color-primary-500);
+        text-decoration: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    /* Event History Card */
+    .payment-events-card {
+        background-color: var(--color-background-secondary);
+        padding: var(--space-6);
+    }
+
+    .payment-events-card h2 {
+        font-size: var(--size-step-1);
+        font-weight: var(--font-bold);
+        margin-bottom: var(--space-6);
+        color: var(--color-foreground);
+    }
+
+    .no-events {
+        text-align: center;
+        padding: var(--space-12);
+        color: var(--color-foreground-secondary);
+    }
+
+    /* Event Timeline */
+    .payment-events-timeline {
+        position: relative;
+        padding-left: var(--space-6);
+    }
+
+    .payment-events-timeline::before {
+        content: '';
+        position: absolute;
+        left: 9px;
+        top: 0;
+        bottom: 0;
+        width: 2px;
+        background-color: var(--color-border);
+    }
+
+    .payment-event {
+        position: relative;
+        display: flex;
+        gap: var(--space-4);
+        padding-bottom: var(--space-6);
+
+        &:last-child {
+            padding-bottom: 0;
+        }
+    }
+
+    .event-marker {
+        position: absolute;
+        left: -22px;
+        top: 4px;
+        width: 12px;
+        height: 12px;
+        background-color: var(--color-primary-500);
+        border: 2px solid var(--color-background-secondary);
+        z-index: 1;
+    }
+
+    .event-content {
+        flex: 1;
+        background-color: var(--color-background-tertiary);
+        padding: var(--space-4);
+    }
+
+    .event-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: baseline;
+        gap: var(--space-4);
+        margin-bottom: var(--space-2);
+    }
+
+    .event-type {
+        font-weight: var(--font-bold);
+        font-family: var(--font-mono);
+        font-size: var(--size-step--1);
+        color: var(--color-foreground);
+    }
+
+    .event-timestamp {
+        font-size: var(--size-step--2);
+        color: var(--color-foreground-secondary);
+        white-space: nowrap;
+    }
+
+    .event-data {
+        margin-top: var(--space-3);
+    }
+
+    .event-data details {
+        cursor: pointer;
+    }
+
+    .event-data summary {
+        font-size: var(--size-step--1);
+        color: var(--color-primary-500);
+        font-weight: var(--font-medium);
+        user-select: none;
+
+        &:hover {
+            text-decoration: underline;
+        }
+    }
+
+    .event-data pre {
+        margin-top: var(--space-2);
+        padding: var(--space-3);
+        background-color: var(--color-background);
+        overflow-x: auto;
+        font-size: var(--size-step--2);
+    }
+
+    .event-data code {
+        font-family: var(--font-mono);
+        color: var(--color-foreground-secondary);
+    }
+
+    /* Responsive */
+    @media (max-width: 48rem) {
+        .billing-stats {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-body {
+            grid-template-columns: 1fr;
+        }
+
+        .payment-amounts {
+            text-align: left;
+        }
+
+        .payment-amount-item {
+            justify-content: space-between;
+        }
+
+        .payment-detail-list {
+            grid-template-columns: 1fr;
+            gap: var(--space-1);
+        }
+
+        .payment-detail-list dt {
+            font-weight: var(--font-bold);
+        }
+
+        .event-header {
+            flex-direction: column;
+            align-items: flex-start;
+            gap: var(--space-1);
+        }
+
+        .event-timestamp {
+            white-space: normal;
+        }
+    }
+}

@@ -1,0 +1,213 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Checkout</h1>
+  </.title>
+
+  <div class="checkout-layout">
+    <.form for={%{}} action={~p"/checkout/payment"} method="post">
+      <input type="hidden" id="tip_amount" name="tip_amount" value="0" />
+
+      <div class="checkout-grid">
+        <%!-- Main Column (Left) --%>
+        <div class="checkout-main">
+          <%!-- Customer Information --%>
+          <div class="checkout-section">
+            <h2>Customer Information</h2>
+            <p class="form-description">Please provide your information to continue to payment.</p>
+
+            <div class="form-field">
+              <label for="customer_name">Name</label>
+              <input
+                type="text"
+                id="customer_name"
+                name="customer_name"
+                placeholder="Your name"
+                required
+                class="form-input"
+              />
+            </div>
+
+            <div class="form-field">
+              <label for="customer_email">Email</label>
+              <input
+                type="email"
+                id="customer_email"
+                name="customer_email"
+                placeholder="your@email.com"
+                required
+                class="form-input"
+              />
+            </div>
+          </div>
+
+          <%!-- Tip Selection --%>
+          <div class="checkout-section checkout-tip-section" data-subtotal={@subtotal}>
+            <h2>Add a Tip</h2>
+            <p class="form-description">Support our team (optional)</p>
+
+            <div class="tip-buttons">
+              <button type="button" class="tip-btn" data-tip-percent="15">15%</button>
+              <button type="button" class="tip-btn" data-tip-percent="18">18%</button>
+              <button type="button" class="tip-btn" data-tip-percent="20">20%</button>
+              <button type="button" class="tip-btn" data-tip-percent="25">25%</button>
+              <button type="button" class="tip-btn" data-tip-type="custom">Custom</button>
+              <button type="button" class="tip-btn active" data-tip-type="none">No Tip</button>
+            </div>
+
+            <div class="tip-custom-input hidden">
+              <div class="form-field">
+                <label for="custom_tip">Custom Tip Amount</label>
+                <div class="input-with-prefix">
+                  <span class="input-prefix">$</span>
+                  <input
+                    type="number"
+                    id="custom_tip"
+                    min="0"
+                    step="0.01"
+                    placeholder="0.00"
+                    class="form-input"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="tip-summary">
+              <div class="tip-amount-row">
+                <span>Tip:</span>
+                <span class="tip-amount-value">$0.00</span>
+              </div>
+              <div class="tip-total-row">
+                <span>Total:</span>
+                <span class="tip-total-value">${float_to_currency(@subtotal)}</span>
+              </div>
+            </div>
+
+            <%!-- Actions --%>
+            <div class="checkout-actions">
+              <a href={~p"/cart"} class="btn btn-secondary">
+                ← Back to Cart
+              </a>
+
+              <button type="submit" class="btn btn-primary btn-large">
+                Continue to Payment →
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Sidebar Column (Right) --%>
+        <div class="checkout-sidebar">
+          <%!-- Order Summary with Collapsible Details --%>
+          <div class="checkout-section">
+            <h2>Order Summary</h2>
+
+            <div class="order-summary-basic">
+              <div class="summary-row">
+                <span>Items:</span>
+                <span>{Enum.reduce(@cart, 0, fn item, acc -> acc + item.quantity end)}</span>
+              </div>
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>${float_to_currency(@subtotal)}</span>
+              </div>
+            </div>
+
+            <details class="order-details">
+              <summary class="order-details-toggle">Show order details</summary>
+              <div class="order-details-content">
+                <div :for={item <- @cart} class="order-detail-item">
+                  <div class="order-detail-info">
+                    <h4>{item.item_title}</h4>
+                    <p :if={item.base_price_label} class="item-size">{item.base_price_label}</p>
+                    <div :if={item.selected_variants != []} class="item-variants">
+                      <strong>Extras:</strong>
+                      <span :for={variant <- item.selected_variants}>{variant.name}</span>
+                    </div>
+                    <p :if={item.customer_note} class="item-note">
+                      <strong>Note:</strong> {item.customer_note}
+                    </p>
+                    <p class="item-quantity">Qty: {item.quantity}</p>
+                  </div>
+                  <div class="order-detail-price">
+                    ${float_to_currency(
+                      Enum.reduce(item.selected_variants, item.base_price_amount, fn v, acc ->
+                        acc + v.price
+                      end) * item.quantity
+                    )}
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </.form>
+  </div>
+</Layouts.app>
+
+<script>
+  (function() {
+    const tipSection = document.querySelector('.checkout-tip-section');
+    const subtotalCents = parseInt(tipSection.dataset.subtotal);
+    const tipButtons = document.querySelectorAll('.tip-btn');
+    const customInput = document.querySelector('.tip-custom-input');
+    const customTipField = document.getElementById('custom_tip');
+    const tipAmountValue = document.querySelector('.tip-amount-value');
+    const tipTotalValue = document.querySelector('.tip-total-value');
+    const tipAmountField = document.getElementById('tip_amount');
+
+    let currentTipCents = 0;
+
+    function formatCurrency(cents) {
+      return (cents / 100).toFixed(2);
+    }
+
+    function updateTipDisplay() {
+      tipAmountValue.textContent = '$' + formatCurrency(currentTipCents);
+      tipTotalValue.textContent = '$' + formatCurrency(subtotalCents + currentTipCents);
+      tipAmountField.value = currentTipCents;
+    }
+
+    function setActiveTipButton(button) {
+      tipButtons.forEach(btn => btn.classList.remove('active'));
+      button.classList.add('active');
+    }
+
+    tipButtons.forEach(button => {
+      button.addEventListener('click', function() {
+        const tipPercent = this.dataset.tipPercent;
+        const tipType = this.dataset.tipType;
+
+        if (tipType === 'none') {
+          currentTipCents = 0;
+          customInput.classList.add('hidden');
+          customTipField.value = '';
+        } else if (tipType === 'custom') {
+          customInput.classList.remove('hidden');
+          customTipField.focus();
+        } else if (tipPercent) {
+          const percent = parseInt(tipPercent);
+          currentTipCents = Math.round(subtotalCents * (percent / 100));
+          customInput.classList.add('hidden');
+          customTipField.value = '';
+        }
+
+        setActiveTipButton(this);
+        updateTipDisplay();
+      });
+    });
+
+    customTipField.addEventListener('input', function() {
+      const customAmount = parseFloat(this.value) || 0;
+      currentTipCents = Math.round(customAmount * 100);
+      updateTipDisplay();
+    });
+  })();
+</script>

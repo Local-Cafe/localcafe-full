@@ -1,0 +1,103 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Payment History</h1>
+  </.title>
+
+  <%= if @payments == [] do %>
+    <div class="empty-state">
+      <p>You haven't made any payments yet.</p>
+    </div>
+  <% else %>
+    <div class="payments-grid">
+      <%= for payment <- @payments do %>
+        <article class="payment-card">
+          <div class="payment-card-header">
+            <div class="payment-card-type">
+              <span class="badge">Payment</span>
+            </div>
+            <div class="payment-card-amount">
+              ${float_to_currency(payment.amount)}
+            </div>
+          </div>
+
+          <div class="payment-card-body">
+            <div class="payment-card-description">
+              <h3 class="payment-card-title">
+                {payment.description || "Payment"}
+              </h3>
+            </div>
+
+            <div class="payment-card-meta">
+              <div class="payment-card-meta-item">
+                <span class="payment-card-meta-label">Date</span>
+                <span class="payment-card-meta-value">
+                  {Calendar.strftime(payment.inserted_at, "%B %d, %Y")}
+                </span>
+              </div>
+
+              <div class="payment-card-meta-item">
+                <span class="payment-card-meta-label">Status</span>
+                <%= case payment.status do %>
+                  <% "succeeded" -> %>
+                    <span class="badge badge-success">Paid</span>
+                  <% "processing" -> %>
+                    <span class="badge badge-warning">Processing</span>
+                  <% "requires_action" -> %>
+                    <span class="badge badge-warning">Action Required</span>
+                  <% "canceled" -> %>
+                    <span class="badge badge-error">Canceled</span>
+                  <% _ -> %>
+                    <span class="badge">{payment.status}</span>
+                <% end %>
+              </div>
+
+              <%= if payment.card_brand && payment.card_last4 do %>
+                <div class="payment-card-meta-item">
+                  <span class="payment-card-meta-label">Payment Method</span>
+                  <span class="payment-card-meta-value payment-method">
+                    {String.capitalize(payment.card_brand)} ••••{payment.card_last4}
+                  </span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+
+          <%= if payment.receipt_url do %>
+            <div class="payment-card-footer">
+              <a href={payment.receipt_url} target="_blank" class="payment-card-receipt-link">
+                <svg
+                  class="payment-card-receipt-icon"
+                  fill="none"
+                  stroke="currentColor"
+                  viewBox="0 0 24 24"
+                  xmlns="http://www.w3.org/2000/svg"
+                >
+                  <path
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    stroke-width="2"
+                    d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z"
+                  />
+                </svg>
+                View Receipt
+              </a>
+            </div>
+          <% end %>
+        </article>
+      <% end %>
+    </div>
+
+    <div class="payment-summary">
+      <p>
+        Showing {length(@payments)} payment{if length(@payments) != 1, do: "s", else: ""}
+      </p>
+    </div>
+  <% end %>
+</Layouts.app>

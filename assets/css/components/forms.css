@@ -1,0 +1,169 @@
+/**
+ * Form Components
+ *
+ * Styles for form elements used by the input component in core_components.ex.
+ * These are NOT web components - just semantic classes on native form elements.
+ */
+
+@layer components {
+    /* Form field wrapper */
+    .form-field {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+        margin-bottom: var(--space-4);
+    }
+
+    /* Label */
+    .form-label {
+        display: block;
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+        margin-bottom: var(--space-2);
+    }
+
+    /* Base input styles (text, email, password, etc.) */
+    .form-input,
+    .form-select,
+    .form-textarea {
+        /* Layout */
+        width: 100%;
+        padding: var(--space-2) var(--space-3);
+
+        /* Typography */
+        font-family: var(--font-sans);
+        font-size: var(--font-size-base);
+        line-height: var(--line-height-normal);
+
+        /* Visual - distinct background with border */
+        background-color: var(--color-background-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+
+        /* Transitions */
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+        &:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.1);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+
+        &[readonly] {
+            cursor: default;
+            background-color: var(--color-background-tertiary);
+        }
+    }
+
+    /* Select specific styles */
+    .form-select {
+        cursor: pointer;
+        padding-right: var(--space-8); /* Space for dropdown arrow */
+        background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' fill='none' viewBox='0 0 20 20'%3E%3Cpath stroke='%236b7280' stroke-linecap='round' stroke-linejoin='round' stroke-width='1.5' d='M6 8l4 4 4-4'/%3E%3C/svg%3E");
+        background-position: right var(--space-2) center;
+        background-repeat: no-repeat;
+        background-size: 1.25rem;
+        appearance: none;
+
+        &:disabled {
+            cursor: not-allowed;
+        }
+    }
+
+    /* Textarea specific styles */
+    .form-textarea {
+        resize: vertical;
+        min-height: 6rem;
+        font-family: var(--font-sans);
+    }
+
+    /* Checkbox styles */
+    .checkbox-label {
+        display: flex;
+        align-items: flex-start;
+        gap: var(--space-2);
+        cursor: pointer;
+        user-select: none;
+    }
+
+    .form-checkbox {
+        width: 1.125rem;
+        height: 1.125rem;
+        margin-top: 0.125rem; /* Align with first line of text */
+        flex-shrink: 0;
+        cursor: pointer;
+
+        /* Visual - distinct background with border */
+        background-color: var(--color-background-secondary);
+        border: 1px solid var(--color-border);
+        border-radius: var(--radius-sm);
+        transition: border-color 0.2s ease, box-shadow 0.2s ease;
+
+        &:focus {
+            outline: none;
+            border-color: var(--color-primary);
+            box-shadow: 0 0 0 3px oklch(from var(--color-primary) l c h / 0.1);
+        }
+
+        &:disabled {
+            cursor: not-allowed;
+            opacity: 0.6;
+        }
+    }
+
+    .checkbox-label-text {
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-normal);
+    }
+
+    .checkbox-label:has(.form-checkbox:disabled) {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+
+    /* Error state */
+    .form-input-error,
+    .form-select.form-input-error,
+    .form-textarea.form-input-error {
+        /* Error styling handled by color */
+    }
+
+    /* Error message */
+    .form-error {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        margin-top: var(--space-1);
+        font-size: var(--font-size-sm);
+        line-height: var(--line-height-tight);
+
+        & > span[aria-hidden] {
+            flex-shrink: 0;
+        }
+    }
+
+    /* Validation hint */
+    .form-hint {
+        margin-top: var(--space-1);
+        font-size: var(--font-size-xs);
+        line-height: var(--line-height-tight);
+    }
+
+    /* Required field marker */
+    .form-required-marker {
+        font-weight: var(--font-weight-bold);
+        margin-left: var(--space-1);
+    }
+
+    #login_form_password {
+        margin-bottom: var(--space-8);
+        button {
+            margin-bottom: var(--space-3);
+        }
+    }
+}

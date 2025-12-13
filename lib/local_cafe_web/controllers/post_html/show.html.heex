@@ -1,0 +1,219 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>{@post.title}</h1>
+  </.title>
+
+  <:admin_bar>
+    <span class={[
+      "admin-bar-badge",
+      if(@post.draft, do: "admin-bar-badge-draft", else: "admin-bar-badge-published")
+    ]}>
+      {if @post.draft, do: "Draft", else: "Published"}
+    </span>
+    <p>Published: {@post.published_at}</p>
+    <.button navigate={~p"/posts/#{@post}/edit?return_to=show"}>
+      Edit Post
+    </.button>
+    <.link
+      href={~p"/posts/#{@post}"}
+      method="delete"
+      data-confirm="Are you sure you want to delete this post?"
+      class="btn btn-secondary"
+    >
+      Delete
+    </.link>
+    <.button navigate={~p"/posts"} class="btn-secondary">
+      Back to Posts
+    </.button>
+  </:admin_bar>
+
+  <%!-- Post Images --%>
+  <%= if @post.images && length(@post.images) > 0 do %>
+    <% primary_image = Enum.find(@post.images, & &1.is_primary) || List.first(@post.images) %>
+    <% gallery_images = Enum.reject(@post.images, & &1.is_primary) %>
+
+    <%!-- Primary/Featured Image --%>
+    <div class="post-featured-image">
+      <img
+        src={primary_image.full_url}
+        alt="Featured image for {@post.title}"
+        loading="eager"
+        data-lightbox={primary_image.full_url}
+        data-lightbox-alt={"Featured image for #{@post.title}"}
+      />
+    </div>
+
+    <%!-- Gallery Grid (if there are additional images) --%>
+    <%= if length(gallery_images) > 0 do %>
+      <div class="post-image-gallery">
+        <div class="gallery-grid">
+          <%= for image <- gallery_images do %>
+            <div class="gallery-item">
+              <img
+                src={image.thumb_url}
+                alt="Gallery image"
+                loading="lazy"
+                data-lightbox={image.full_url}
+                data-lightbox-alt="Gallery image"
+              />
+            </div>
+          <% end %>
+        </div>
+      </div>
+    <% end %>
+  <% end %>
+
+  <div class="post-layout">
+    <%!-- Sidebar with TOC and Tags --%>
+    <%= if length(@toc) > 0 || @post.tags != [] do %>
+      <aside class="post-sidebar">
+        <div class="sidebar-section">
+          <div>{Calendar.strftime(@post.published_at, "%B %d, %Y")}</div>
+        </div>
+        <%= if @post.tags != [] do %>
+          <div class="sidebar-section">
+            <div class="post-tags">
+              <%= for tag <- @post.tags do %>
+                <a href={~p"/posts/tags/#{tag.name}"} class="tag">
+                  {tag.name}
+                </a>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+
+        <%= if length(@toc) > 0 do %>
+          <nav class="table-of-contents">
+            <h2 class="toc-title">Table of Contents</h2>
+            <ul class="toc-list">
+              <%= for item <- @toc do %>
+                <li class={"toc-item toc-level-#{item.level}"}>
+                  <a href={"##{item.slug}"} class="toc-link">
+                    {item.text}
+                  </a>
+                </li>
+              <% end %>
+            </ul>
+          </nav>
+        <% end %>
+      </aside>
+    <% end %>
+
+    <div class="post-content">
+      <div class="post-body">
+        {parse_markdown(@post.body)}
+      </div>
+    </div>
+  </div>
+
+  <%!-- Comments Section --%>
+  <section class="comments-section">
+    <h2 class="comments-title">Comments ({length(@comments)})</h2>
+
+    <%!-- Comments List --%>
+    <div class="comments-list">
+      <%= if @comments == [] do %>
+        <p class="no-comments">No comments yet. Be the first to comment!</p>
+      <% else %>
+        <%= for comment <- @comments do %>
+          <div id={"comment-#{comment.id}"} class="comment" data-comment-id={comment.id}>
+            <div class="comment-header">
+              <span class="comment-author">{comment.user.name || comment.user.email}</span>
+              <time class="comment-date" datetime={comment.inserted_at}>
+                {Calendar.strftime(comment.inserted_at, "%B %d, %Y at %I:%M %p")}
+              </time>
+              <a
+                href={~p"/posts/#{@post}?comment=#{comment.id}"}
+                class="comment-permalink"
+                aria-label="Permalink to this comment"
+              >
+                #
+              </a>
+              <%= if not comment.approved do %>
+                <span class="comment-badge comment-badge-pending">Pending Approval</span>
+              <% end %>
+            </div>
+            <div class="comment-body">{comment.body}</div>
+            <div class="comment-actions">
+              <%= if @current_scope && @current_scope.user && @current_scope.user.admin do %>
+                <%= if not comment.approved do %>
+                  <.form
+                    :let={_f}
+                    for={%{}}
+                    action={~p"/comments/#{comment.id}/approve"}
+                    method="post"
+                  >
+                    <button type="submit" class="btn btn-sm">Approve</button>
+                  </.form>
+                <% end %>
+              <% end %>
+              <%= if @current_scope && @current_scope.user && (@current_scope.user.admin ||@current_scope.user.id == comment.user_id) do %>
+                <.link
+                  href={~p"/comments/#{comment.id}"}
+                  method="delete"
+                  data-confirm="Are you sure you want to delete this comment?"
+                  class="btn btn-sm"
+                >
+                  Delete
+                </.link>
+              <% end %>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+    <%!-- Comment Form (only for authenticated users) --%>
+    <%= if @current_scope && @current_scope.user do %>
+      <div class="comment-form">
+        <h3>Leave a Comment</h3>
+        <.form
+          :let={f}
+          for={%{}}
+          as={:comment}
+          action={~p"/posts/#{@post}/comments"}
+          method="post"
+        >
+          <.input
+            field={f[:body]}
+            type="textarea"
+            label="Your comment"
+            placeholder="Share your thoughts..."
+            required
+          />
+          <.button variant="primary">Post Comment</.button>
+        </.form>
+      </div>
+    <% else %>
+      <div class="comment-login-prompt">
+        <p>
+          <.link navigate={~p"/users/log-in"}>Log in</.link>
+          or <.link navigate={~p"/users/register"}>register</.link>
+          to leave a comment.
+        </p>
+      </div>
+    <% end %>
+  </section>
+
+  <nav class="post-navigation" aria-label="Post navigation">
+    <div class="post-nav-link post-nav-prev">
+      <span :if={@previous_post} class="post-nav-label">← Previous</span>
+      <.link :if={@previous_post} navigate={~p"/posts/#{@previous_post}"} class="post-nav-title">
+        {@previous_post.title}
+      </.link>
+    </div>
+
+    <div class="post-nav-link post-nav-next">
+      <span :if={@next_post} class="post-nav-label">Next →</span>
+      <.link :if={@next_post} navigate={~p"/posts/#{@next_post}"} class="post-nav-title">
+        {@next_post.title}
+      </.link>
+    </div>
+  </nav>
+</Layouts.app>

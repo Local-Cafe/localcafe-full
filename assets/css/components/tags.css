@@ -1,0 +1,52 @@
+@layer components {
+    /* Tag filtering section on index page */
+    .tags-section {
+        /*margin-bottom: var(--space-8);*/
+        padding: var(--space-4);
+        border-style: solid;
+        border-width: 1px;
+        border-top: none;
+    }
+
+    .tags-section h4 {
+        margin: 0 0 var(--space-4) 0;
+        font-size: var(--text-base);
+        font-weight: var(--font-semibold);
+    }
+
+    .tags-list {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .tag {
+        border: 1px solid var(--color-primary);
+        background-color: var(--color-background);
+        display: inline-block;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-semibold);
+        padding: var(--space-1) var(--space-2);
+        text-decoration: none;
+        text-transform: uppercase;
+        transition: all 0.2s ease;
+        &:hover {
+            background-color: var(--color-primary);
+            color: var(--color-background);
+            border: 1px solid var(--color-background);
+        }
+
+        &:active {
+            background-color: var(--color-background-tertiary);
+        }
+    }
+
+    .tag-active {
+        background-color: var(--color-primary);
+        color: var(--color-background);
+        &:hover {
+            background-color: var(--color-primary);
+            opacity: 0.9;
+        }
+    }
+}

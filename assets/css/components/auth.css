@@ -1,0 +1,159 @@
+/**
+ * Authentication Pages
+ *
+ * Styles for login, registration, and user settings pages
+ */
+
+@layer components {
+  /* Auth page container */
+  .auth-container {
+    max-width: 28rem;
+    margin: 0 auto;
+    padding: var(--space-6);
+  }
+
+  /* Auth page header */
+  .auth-header {
+    text-align: center;
+    margin-bottom: var(--space-6);
+  }
+
+  .auth-subtitle {
+    margin-top: var(--space-3);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .auth-subtitle a {
+    color: var(--color-primary);
+    font-weight: var(--font-semibold);
+    text-decoration: none;
+  }
+
+  .auth-subtitle a:hover {
+    text-decoration: underline;
+  }
+
+  /* Auth form spacing */
+  .auth-form {
+    margin-bottom: var(--space-6);
+  }
+
+  .auth-form .form-field {
+    margin-bottom: var(--space-4);
+  }
+
+  .auth-form button {
+    margin-top: var(--space-4);
+  }
+
+  /* Form divider */
+  .form-divider {
+    position: relative;
+    text-align: center;
+    margin: var(--space-6) 0;
+  }
+
+  .form-divider::before {
+    content: "";
+    position: absolute;
+    top: 50%;
+    left: 0;
+    right: 0;
+    height: 1px;
+    background-color: var(--color-border);
+  }
+
+  .form-divider-text {
+    position: relative;
+    display: inline-block;
+    padding: 0 var(--space-3);
+    background-color: var(--color-background);
+    color: var(--color-text-secondary);
+    font-size: var(--text-sm);
+    font-weight: var(--font-medium);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Help text / hints */
+  .help-text {
+    margin-top: var(--space-2);
+    margin-bottom: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    line-height: var(--leading-normal);
+  }
+
+  /* Alert boxes for auth pages */
+  .auth-alert {
+    padding: var(--space-4);
+    margin-bottom: var(--space-6);
+    background-color: oklch(0.95 0.04 220);
+    border: 1px solid oklch(0.85 0.08 220);
+    border-radius: var(--radius-md);
+    font-size: var(--text-sm);
+    color: var(--color-text-primary);
+  }
+
+  .auth-alert p {
+    margin: 0;
+  }
+
+  .auth-alert p + p {
+    margin-top: var(--space-2);
+  }
+
+  .auth-alert a {
+    color: var(--color-primary);
+    text-decoration: underline;
+  }
+
+  .auth-alert-outline {
+    background-color: transparent;
+    border: 1px solid var(--color-border);
+  }
+
+  /* Settings page specific */
+  .settings-container {
+    max-width: 36rem;
+    margin: 0 auto;
+    padding: var(--space-6);
+  }
+
+  .settings-section {
+    padding: var(--space-6) 0;
+  }
+
+  .settings-section:not(:last-child) {
+    border-bottom: 1px solid var(--color-border);
+  }
+
+  .settings-section h2 {
+    margin-bottom: var(--space-4);
+    font-size: var(--text-lg);
+    font-weight: var(--font-semibold);
+  }
+
+  /* Button variations for auth forms */
+  .btn-auth {
+    width: 100%;
+    padding: var(--space-3);
+    font-size: var(--text-base);
+    font-weight: var(--font-semibold);
+    text-transform: none;
+    letter-spacing: normal;
+  }
+
+  .btn-auth-secondary {
+    margin-top: var(--space-3);
+    background-color: transparent;
+    color: var(--color-primary);
+    border: 1px solid var(--color-border);
+  }
+
+  .btn-auth-secondary:hover:not(:disabled) {
+    background-color: var(--color-surface-primary);
+    border-color: var(--color-primary);
+  }
+}

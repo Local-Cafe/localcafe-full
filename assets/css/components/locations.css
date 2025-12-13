@@ -1,0 +1,169 @@
+/**
+ * Locations Component
+ * Adapted from localcafe-lite for full Phoenix project
+ */
+
+@layer components {
+    .location-container {
+    }
+    .locations-grid {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+        max-width: var(--container-2xl);
+        margin: var(--space-8) auto;
+    }
+
+    .location-card {
+        background-color: var(--color-background);
+        border: var(--border-width-medium) solid var(--color-border);
+        padding: var(--space-6);
+    }
+
+    /* Two-column layout when image exists */
+    @media (min-width: 768px) {
+        .location-card:has(.location-map) {
+            padding: 0;
+            position: relative;
+        }
+
+        /* Name and description constrained to left half */
+        .location-card:has(.location-map) .location-name {
+            padding: var(--space-6) var(--space-6) 0;
+            width: 50%;
+        }
+
+        .location-card:has(.location-map) .location-description {
+            padding: var(--space-4) var(--space-6) var(--space-6);
+            width: 50%;
+        }
+
+        .location-card:has(.location-map) .location-content {
+            display: flex;
+            gap: 0;
+        }
+
+        .location-card:has(.location-map) .location-info {
+            flex: 1;
+            padding: 0 var(--space-6) var(--space-6);
+            max-width: 50%;
+        }
+    }
+
+    .location-name {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-primary);
+        margin: 0 0 var(--space-4) 0;
+    }
+
+    .location-description {
+        font-size: var(--font-size-base);
+        color: var(--color-text-secondary);
+        line-height: 1.6;
+        margin: 0 0 var(--space-6) 0;
+    }
+
+    .location-content {
+        display: grid;
+        gap: var(--space-6);
+    }
+
+    .location-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    /* Horizontal layout when no image */
+    @media (min-width: 768px) {
+        .location-card:not(:has(.location-map)) .location-info {
+            flex-direction: row;
+            gap: var(--space-8);
+        }
+
+        .location-card:not(:has(.location-map)) .location-section {
+            flex: 1;
+        }
+    }
+
+    .location-section h4 {
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-text-secondary);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        margin: 0 0 var(--space-2) 0;
+    }
+
+    .location-section p {
+        font-size: var(--font-size-base);
+        color: var(--color-text-primary);
+        margin: 0;
+        line-height: 1.6;
+    }
+
+    .location-section p + p {
+        margin-top: var(--space-1);
+    }
+
+    .location-menu-link {
+        margin-top: var(--space-4);
+    }
+
+    .location-map {
+        border: var(--border-width-medium) solid var(--color-border);
+        overflow: hidden;
+        max-width: 512px;
+    }
+
+    @media (min-width: 768px) {
+        .location-card:has(.location-map) .location-map {
+            max-width: none;
+            border: none;
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 50%;
+            height: 100%;
+        }
+    }
+
+    @media (max-width: 767px) {
+        .locations-grid {
+            padding: 0;
+            gap: var(--space-3);
+        }
+
+        .location-card {
+            padding: var(--space-3);
+        }
+
+        .location-name {
+            margin: 0 0 var(--space-2) 0;
+        }
+
+        .location-description {
+            margin: 0 0 var(--space-3) 0;
+        }
+
+        .location-content {
+            gap: var(--space-3);
+        }
+
+        .location-info {
+            gap: var(--space-4);
+        }
+
+        .location-section {
+            padding-bottom: var(--space-2);
+        }
+    }
+
+    .location-map img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+}

@@ -1,0 +1,141 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Your Cart</h1>
+  </.title>
+  <div :if={@cart == []} class="cart-empty">
+    <p>Your cart is empty</p>
+    <.link navigate={~p"/#menu"} class="btn btn-primary">
+      Browse Menu
+    </.link>
+  </div>
+
+  <div :if={@cart != []} class="cart-container">
+    <%!-- Cart Items --%>
+    <div class="cart-items">
+        <h2>Your Items</h2>
+
+        <div :for={{item, index} <- Enum.with_index(@cart)} class="cart-item">
+          <%!-- Product Image --%>
+          <div :if={item.item_image_url} class="cart-item-image-wrapper">
+            <img
+              class="cart-item-image"
+              src={item.item_image_url}
+              alt={item.item_title}
+            />
+          </div>
+
+          <%!-- Product Details --%>
+          <div class="cart-item-content">
+            <div class="cart-item-header">
+              <h3 class="cart-item-title">{item.item_title}</h3>
+              <p :if={item.base_price_label} class="cart-item-size">{item.base_price_label}</p>
+            </div>
+
+            <div class="cart-item-body">
+              <div :if={item.selected_variants != []} class="cart-item-extras">
+                <span class="extras-label">Extras:</span>
+                <div class="extras-list">
+                  <span :for={variant <- item.selected_variants} class="extra-tag">
+                    {variant.name}
+                  </span>
+                </div>
+              </div>
+
+              <p :if={item.customer_note} class="cart-item-note">
+                <strong>Note:</strong> {item.customer_note}
+              </p>
+
+              <div class="cart-item-meta">
+                <div class="cart-item-quantity-wrapper">
+                  <span class="quantity-text">Quantity: {item.quantity}</span>
+                  <.form for={%{}} action={~p"/cart/update-quantity"} method="post" class="quantity-form">
+                    <input type="hidden" name="index" value={index} />
+                    <input
+                      type="number"
+                      id={"quantity-#{index}"}
+                      name="quantity"
+                      value={item.quantity}
+                      min="1"
+                      max="99"
+                      onchange="this.form.submit()"
+                      class="quantity-input"
+                    />
+                  </.form>
+                </div>
+
+                <div class="cart-item-price">
+                  <span class="price-amount">
+                    ${float_to_currency(
+                      Enum.reduce(
+                        item.selected_variants,
+                        item.base_price_amount,
+                        fn v, acc -> acc + v.price end
+                      ) * item.quantity
+                    )}
+                  </span>
+                </div>
+              </div>
+            </div>
+
+            <%!-- Remove Button --%>
+            <div class="cart-item-footer">
+              <.form for={%{}} action={~p"/cart/remove"} method="post">
+                <input type="hidden" name="index" value={index} />
+                <button type="submit" class="btn-remove" title="Remove item">
+                  <svg
+                    xmlns="http://www.w3.org/2000/svg"
+                    fill="none"
+                    viewBox="0 0 24 24"
+                    stroke-width="1.5"
+                    stroke="currentColor"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      d="m14.74 9-.346 9m-4.788 0L9.26 9m9.968-3.21c.342.052.682.107 1.022.166m-1.022-.165L18.16 19.673a2.25 2.25 0 0 1-2.244 2.077H8.084a2.25 2.25 0 0 1-2.244-2.077L4.772 5.79m14.456 0a48.108 48.108 0 0 0-3.478-.397m-12 .562c.34-.059.68-.114 1.022-.165m0 0a48.11 48.11 0 0 1 3.478-.397m7.5 0v-.916c0-1.18-.91-2.164-2.09-2.201a51.964 51.964 0 0 0-3.32 0c-1.18.037-2.09 1.022-2.09 2.201v.916m7.5 0a48.667 48.667 0 0 0-7.5 0"
+                    />
+                  </svg>
+                  <span class="btn-remove-text">Remove</span>
+                </button>
+              </.form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    <%!-- Cart Summary & Actions --%>
+    <div class="cart-summary">
+      <h2>Summary</h2>
+
+      <div class="cart-subtotal">
+        <span class="cart-subtotal-label">Subtotal:</span>
+        <span class="cart-subtotal-amount">
+          ${float_to_currency(@subtotal)}
+        </span>
+      </div>
+
+      <div class="cart-actions">
+        <.link navigate={~p"/checkout"} class="btn btn-primary btn-large">
+          Proceed to Checkout
+        </.link>
+
+        <.link navigate={~p"/#menu"} class="btn btn-secondary">
+          ← Continue Shopping
+        </.link>
+
+        <.form for={%{}} action={~p"/cart/clear"} method="post">
+          <.button type="submit" variant="secondary">
+            Clear Cart
+          </.button>
+        </.form>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

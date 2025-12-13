@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="csrf-token" content={get_csrf_token()} />
+    <meta
+      :if={assigns[:page_description]}
+      name="description"
+      content={assigns[:page_description]}
+    />
+    <%!-- Open Graph meta tags for social media sharing --%>
+    <meta
+      property="og:title"
+      content={assigns[:page_title] || "LocalCafe"}
+    />
+    <meta
+      :if={assigns[:page_description]}
+      property="og:description"
+      content={assigns[:page_description]}
+    />
+    <meta
+      :if={assigns[:page_image]}
+      property="og:image"
+      content={assigns[:page_image]}
+    />
+    <meta
+      property="og:url"
+      content={assigns[:page_url] || url(~p"/")}
+    />
+    <meta
+      property="og:type"
+      content={assigns[:page_type] || "website"}
+    />
+    <meta property="og:site_name" content="LocalCafe.org" />
+    <meta name="twitter:card" content="summary_large_image" />
+    <meta
+      name="twitter:title"
+      content={assigns[:page_title] || "LocalCafe"}
+    />
+    <meta
+      :if={assigns[:page_description]}
+      name="twitter:description"
+      content={assigns[:page_description]}
+    />
+    <meta
+      :if={assigns[:page_image]}
+      name="twitter:image"
+      content={assigns[:page_image]}
+    />
+    <.live_title default="LocalCafe" suffix="- LocalCafe.org">
+      {assigns[:page_title]}
+    </.live_title>
+    <link phx-track-static rel="stylesheet" href={~p"/assets/css/app.css"} />
+    <script>
+      window.VAPID_PUBLIC_KEY = "<%= Application.get_env(:local_cafe, :vapid_public_key) || "" %>";
+    </script>
+    <script defer phx-track-static type="module" src={~p"/assets/js/app.js"}>
+    </script>
+  </head>
+  <body>
+    {@inner_content}
+  </body>
+</html>

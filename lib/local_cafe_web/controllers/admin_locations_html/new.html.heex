@@ -1,0 +1,22 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <:admin_bar>
+    <.button href={~p"/admin/locations"} variant="secondary">
+      Back to Locations
+    </.button>
+  </:admin_bar>
+
+  <.title>
+    <h1>New Location</h1>
+  </.title>
+
+  <div class="admin-container">
+    <._form changeset={@changeset} action={~p"/admin/locations"} />
+  </div>
+</Layouts.app>

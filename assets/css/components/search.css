@@ -1,0 +1,71 @@
+@layer components {
+    .search-form {
+        display: flex;
+        align-items: stretch;
+        width: 100%;
+        border: 1px solid var(--color-primary);
+        border-top: none;
+        .button {
+            background-color: var(--color-primary);
+            color: var(--color-background);
+            &:hover {
+                background-color: var(--color-background);
+                color: var(--color-primary);
+            }
+        }
+    }
+
+    .search-input {
+        flex: auto;
+        width: 100%;
+        padding: var(--space-3) var(--space-4);
+        background-color: var(--color-background-secondary);
+        border: none;
+        outline: none;
+
+        font-size: var(--text-base);
+        transition: all 0.2s ease;
+    }
+
+    .search-input:focus {
+        outline: none;
+        border: none;
+    }
+
+    .search-input:focus-visible {
+        outline: none;
+        border: none;
+    }
+
+    /* Custom clear button for search inputs */
+    .search-input::-webkit-search-cancel-button {
+        -webkit-appearance: none;
+        appearance: none;
+        height: 18px;
+        width: 18px;
+        margin-left: var(--space-2);
+        mask-repeat: no-repeat;
+        mask-position: center;
+        mask-size: contain;
+        cursor: pointer;
+    }
+
+    /* Firefox doesn't support search cancel button, so we rely on the Clear button */
+
+    /* Responsive layout */
+    @media (max-width: 639px) {
+        .search-form {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .search-input {
+            flex: 1 1 auto;
+            width: 100%;
+        }
+
+        .search-form .button {
+            width: 100%;
+        }
+    }
+}

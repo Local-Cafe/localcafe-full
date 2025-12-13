@@ -1,0 +1,86 @@
+/**
+ * Admin Bar Component
+ *
+ * Sticky admin toolbar for admin actions.
+ * Uses design tokens for consistent styling.
+ */
+
+@layer components {
+    /* Admin bar container */
+    .admin-bar {
+        position: sticky;
+        top: 4rem; /* Below the nav header */
+        z-index: calc(
+            var(--z-header, 1000) - 10
+        ); /* Below nav but above content */
+        background-color: var(--color-background-secondary);
+    }
+
+    .admin-bar-container {
+        max-width: var(--container-2xl); /* 1400px */
+        margin: auto;
+    }
+
+    .admin-bar-content {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: var(--space-4);
+    }
+
+    /* Admin bar left section (label/info) */
+    .admin-bar-label {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+    }
+
+    .admin-bar-icon {
+        width: 1.25rem;
+        height: 1.25rem;
+    }
+
+    /* Admin bar actions (right section) */
+    .admin-bar-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        flex-wrap: wrap;
+    }
+
+    /* Status badge in admin bar */
+    .admin-bar-badge {
+        display: inline-flex;
+        align-items: center;
+        padding: var(--space-1) var(--space-3);
+        background-color: var(--color-background-tertiary);
+
+        font-size: var(--font-size-sm);
+        font-weight: var(--font-weight-medium);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 639px) {
+        .admin-bar-content {
+            flex-direction: column;
+            align-items: stretch;
+            gap: var(--space-3);
+        }
+
+        .admin-bar-label {
+            justify-content: center;
+        }
+
+        .admin-bar-actions {
+            justify-content: center;
+        }
+    }
+
+    @media (min-width: 1024px) {
+        .admin-bar-container {
+            padding: var(--space-3) 0;
+        }
+    }
+}

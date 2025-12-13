@@ -1,0 +1,121 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <script>
+    window.userToken = "<%= @user_token %>";
+  </script>
+  <.title>
+    <h1>
+      Real-Time Analytics Dashboard
+    </h1>
+  </.title>
+  <div class="admin-analytics">
+    <div class="analytics-grid">
+      <%!-- Real-time Metrics --%>
+      <section class="analytics-card analytics-card-wide">
+        <h2 class="card-title">Unique Visitors</h2>
+        <div class="metrics-grid">
+          <div class="metric">
+            <span class="metric-label">Last Minute</span>
+            <span class="metric-value" id="last-minute-count">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Last 30 Minutes</span>
+            <span class="metric-value" id="last-30-minutes-count">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Last Hour</span>
+            <span class="metric-value" id="last-hour-count">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Last 6 Hours</span>
+            <span class="metric-value" id="last-6-hours-count">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Last 12 Hours</span>
+            <span class="metric-value" id="last-12-hours-count">0</span>
+          </div>
+          <div class="metric">
+            <span class="metric-label">Last 24 Hours</span>
+            <span class="metric-value" id="last-24-hours-count">0</span>
+          </div>
+        </div>
+      </section>
+
+      <%!-- Hourly Traffic Chart --%>
+      <section class="analytics-card analytics-card-wide">
+        <h2 class="card-title">Hourly Traffic (Unique Visitors per Minute)</h2>
+        <div class="chart-container">
+          <canvas id="hourly-traffic-chart"></canvas>
+        </div>
+      </section>
+
+      <%!-- Live Activity Feed (Consolidated with Recent Visitors) --%>
+      <section class="analytics-card analytics-card-wide">
+        <h2 class="card-title">Live Activity Feed</h2>
+        <div class="activity-feed" id="activity-feed">
+          <p class="empty-state">Waiting for activity...</p>
+        </div>
+      </section>
+
+      <%!-- Top Pages --%>
+      <section class="analytics-card">
+        <h2 class="card-title">Top Pages (Real-time)</h2>
+        <div class="top-pages" id="top-pages">
+          <p class="empty-state">No data yet</p>
+        </div>
+      </section>
+
+      <%!-- Geographic Distribution --%>
+      <section class="analytics-card">
+        <h2 class="card-title">Geographic Distribution</h2>
+        <div class="geographic-data" id="geographic-data">
+          <p class="empty-state">No data yet</p>
+        </div>
+      </section>
+
+      <%!-- Top Referrers --%>
+      <section class="analytics-card">
+        <h2 class="card-title">Top External Referrers</h2>
+        <div class="top-referrers" id="top-referrers">
+          <p class="empty-state">No data yet</p>
+        </div>
+      </section>
+
+      <%!-- Bot Activity --%>
+      <section class="analytics-card">
+        <h2 class="card-title">Bots</h2>
+        <div class="bot-counts" id="bot-counts">
+          <p class="empty-state">No bots detected</p>
+        </div>
+      </section>
+
+      <%!-- OS Distribution --%>
+      <section class="analytics-card">
+        <h2 class="card-title">Operating Systems</h2>
+        <div class="os-counts" id="os-counts">
+          <p class="empty-state">No data yet</p>
+        </div>
+      </section>
+
+      <%!-- Browser Distribution --%>
+      <section class="analytics-card">
+        <h2 class="card-title">Browsers</h2>
+        <div class="browser-counts" id="browser-counts">
+          <p class="empty-state">No data yet</p>
+        </div>
+      </section>
+    </div>
+
+    <%!-- Connection Status --%>
+    <div class="connection-status" id="connection-status">
+      <span class="status-indicator status-disconnected"></span>
+      <span class="status-text">Connecting...</span>
+    </div>
+  </div>
+</Layouts.app>

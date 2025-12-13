@@ -1,0 +1,137 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Comment Moderation</h1>
+    <p>
+      <%= if assigns[:user_id] do %>
+        Viewing comments for a specific user
+      <% else %>
+        Review and manage comments from posts and photos
+      <% end %>
+    </p>
+  </.title>
+
+  <div class="admin-comments-page">
+    <%!-- Filter Tabs --%>
+    <%= if assigns[:user_id] do %>
+      <div class="comment-user-filter">
+        <p>
+          Showing all comments from user
+          <.link navigate={~p"/admin/users"} class="btn btn-sm btn-secondary">
+            Back to Users
+          </.link>
+        </p>
+      </div>
+    <% else %>
+      <div class="comment-filters">
+        <.link
+          navigate={~p"/admin/comments?filter=pending"}
+          class={["filter-tab", if(@filter == "pending", do: "filter-tab-active", else: "")]}
+        >
+          Pending
+        </.link>
+        <.link
+          navigate={~p"/admin/comments?filter=approved"}
+          class={["filter-tab", if(@filter == "approved", do: "filter-tab-active", else: "")]}
+        >
+          Approved
+        </.link>
+        <.link
+          navigate={~p"/admin/comments?filter=all"}
+          class={["filter-tab", if(@filter == "all", do: "filter-tab-active", else: "")]}
+        >
+          All
+        </.link>
+      </div>
+    <% end %>
+
+    <%!-- Comments List --%>
+    <div class="admin-comments-list">
+      <%= if @comments == [] do %>
+        <div class="empty-comments">
+          <%= if assigns[:user_id] do %>
+            <p>No comments found for this user.</p>
+          <% else %>
+            <p>No {@filter} comments found.</p>
+          <% end %>
+        </div>
+      <% else %>
+        <%= for comment <- @comments do %>
+          <div class="admin-comment-card">
+            <div class="comment-header">
+              <div class="comment-meta">
+                <span class="comment-author">{comment.user.name || comment.user.email}</span>
+                <span class="comment-separator">·</span>
+                <time class="comment-date" datetime={comment.inserted_at}>
+                  {Calendar.strftime(comment.inserted_at, "%B %d, %Y at %I:%M %p")}
+                </time>
+                <span class="comment-separator">·</span>
+                <span class={[
+                  "comment-type-badge",
+                  if(comment.comment_type == :post,
+                    do: "comment-type-post",
+                    else: "comment-type-photo"
+                  )
+                ]}>
+                  {if comment.comment_type == :post, do: "Post", else: "Photo"}
+                </span>
+                <%= if not comment.approved do %>
+                  <span class="comment-status-badge comment-status-pending">
+                    Pending Approval
+                  </span>
+                <% else %>
+                  <span class="comment-status-badge comment-status-approved">
+                    Approved
+                  </span>
+                <% end %>
+              </div>
+            </div>
+
+            <div class="comment-content">
+              <div class="comment-on">
+                Comment on:
+                <.link navigate={~p"/posts/#{comment.post}"} class="comment-link">
+                  {comment.post.title}
+                </.link>
+              </div>
+
+              <div class="comment-body">
+                {comment.body}
+              </div>
+            </div>
+
+            <div class="comment-actions">
+              <%= if not comment.approved do %>
+                <.form
+                  :let={_f}
+                  for={%{}}
+                  action={~p"/comments/#{comment.id}/approve"}
+                  method="post"
+                >
+                  <.button variant="primary" class="btn-sm">
+                    Approve
+                  </.button>
+                </.form>
+              <% end %>
+
+              <.link
+                href={~p"/comments/#{comment.id}"}
+                method="delete"
+                data-confirm="Are you sure you want to delete this comment?"
+                class="btn btn-danger btn-sm"
+              >
+                Delete
+              </.link>
+            </div>
+          </div>
+        <% end %>
+      <% end %>
+    </div>
+  </div>
+</Layouts.app>

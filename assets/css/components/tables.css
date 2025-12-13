@@ -1,0 +1,111 @@
+/**
+ * Table Components
+ *
+ * Styles for table components used in core_components.ex.
+ * These are NOT web components - just semantic classes on native <table> elements.
+ */
+
+@layer components {
+    /* Table container with horizontal scroll */
+    .table-container {
+        width: 100%;
+        overflow-x: auto;
+        background-color: var(--color-background);
+    }
+
+    /* Data table */
+    .data-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: var(--font-size-sm);
+        background-color: var(--color-background);
+    }
+
+    /* Table header */
+    .table-header {
+        background-color: var(--color-background-secondary);
+
+        & th {
+            padding: var(--space-3) var(--space-4);
+            text-align: left;
+            font-weight: var(--font-weight-semibold);
+            font-size: var(--font-size-xs);
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+        }
+
+        & th:first-child {
+            padding-left: var(--space-6);
+        }
+
+        & th:last-child {
+            padding-right: var(--space-6);
+        }
+    }
+
+    /* Table body */
+    .data-table tbody {
+        & tr {
+            &:last-child {
+                border-bottom: none;
+            }
+        }
+
+        & td {
+            padding: var(--space-4);
+            vertical-align: top;
+        }
+
+        & td:first-child {
+            padding-left: var(--space-6);
+        }
+
+        & td:last-child {
+            padding-right: var(--space-6);
+        }
+    }
+
+    /* Clickable table cells */
+    .table-cell-clickable {
+        cursor: pointer;
+        user-select: none;
+    }
+
+    /* Table actions column */
+    .table-actions-cell {
+        width: 1%; /* Shrink to fit content */
+        white-space: nowrap;
+    }
+
+    .table-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        justify-content: flex-end;
+    }
+
+    /* Responsive: stack on small screens if needed */
+    @media (max-width: 639px) {
+        .table-container {
+        }
+
+        .data-table {
+            font-size: var(--font-size-xs);
+        }
+
+        .table-header th,
+        .data-table tbody td {
+            padding: var(--space-2) var(--space-3);
+        }
+
+        .table-header th:first-child,
+        .data-table tbody td:first-child {
+            padding-left: var(--space-4);
+        }
+
+        .table-header th:last-child,
+        .data-table tbody td:last-child {
+            padding-right: var(--space-4);
+        }
+    }
+}

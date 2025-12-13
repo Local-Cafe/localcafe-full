@@ -1,0 +1,135 @@
+/**
+ * Specials Component
+ * Displays featured menu items with responsive grid layout
+ * - 1 special: full-width horizontal layout (image left, content right)
+ * - 2 specials: two-column layout
+ * - 3+ specials: three-column grid layout
+ */
+
+@layer components {
+    .specials-section {
+        scroll-margin-top: 6rem;
+        margin: var(--space-8) 0;
+    }
+
+    .specials-section .section-heading {
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-text-primary);
+        max-width: var(--container-2xl);
+    }
+
+    .specials-grid {
+        display: grid;
+        gap: var(--space-6);
+        max-width: var(--container-2xl);
+        margin-inline: auto;
+        /* Default: 3 columns for 3+ items */
+        grid-template-columns: repeat(auto-fill, minmax(min(100%, 300px), 1fr));
+    }
+
+    /* When there are exactly 2 specials: 2 columns */
+    .special-card:nth-last-child(2):first-child,
+    .special-card:nth-last-child(2):first-child ~ .special-card {
+        grid-column: span 1;
+    }
+
+    .specials-grid:has(.special-card:nth-last-child(2):first-child) {
+        grid-template-columns: repeat(2, 1fr);
+    }
+
+    /* When there is only 1 special: full width horizontal layout */
+    .special-card:only-child {
+        grid-column: 1 / -1;
+    }
+
+    /* Make the menu-item-card a grid container for horizontal layout */
+    .special-card:only-child .menu-item-card {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        grid-template-rows: auto 1fr;
+        gap: var(--space-6);
+    }
+
+    /* Image container - first column, spans all rows */
+    .special-card:only-child .menu-item-card .menu-item-image-wrapper {
+        grid-column: 1;
+        grid-row: 1 / -1;
+        display: block;
+        aspect-ratio: unset;
+    }
+
+    .special-card:only-child .menu-item-card .menu-item-image {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+        min-height: 400px;
+    }
+
+    /* Content container - second column, spans both rows */
+    .special-card:only-child .menu-item-card .menu-item-content {
+        grid-column: 2;
+        grid-row: 1 / -1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .special-card {
+        border: 1px solid var(--color-border);
+        position: relative;
+        transition: border-color 0.2s ease;
+    }
+
+    .special-card:hover {
+        border-color: var(--color-border-strong);
+    }
+
+    /* "Special" badge in top-right corner */
+    .special-card::before {
+        content: "Special";
+        position: absolute;
+        top: var(--space-2);
+        right: var(--space-2);
+        background: var(--color-primary);
+        color: var(--color-background);
+        padding: var(--space-1) var(--space-3);
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+        z-index: 1;
+    }
+
+    @media (max-width: 768px) {
+        /* Mobile: always single column */
+        .specials-grid {
+            grid-template-columns: 1fr !important;
+        }
+
+        /* Single special on mobile: stack vertically */
+        .special-card:only-child .menu-item-card {
+            display: flex !important;
+            flex-direction: column !important;
+            grid-template-columns: unset !important;
+            grid-template-rows: unset !important;
+        }
+
+        .special-card:only-child .menu-item-card .menu-item-image-wrapper {
+            grid-column: unset !important;
+            grid-row: unset !important;
+            aspect-ratio: 4 / 3;
+        }
+
+        .special-card:only-child .menu-item-card .menu-item-image {
+            height: auto;
+            max-height: 300px;
+            min-height: auto;
+        }
+
+        .special-card:only-child .menu-item-card .menu-item-content {
+            grid-column: unset !important;
+            grid-row: unset !important;
+        }
+    }
+}

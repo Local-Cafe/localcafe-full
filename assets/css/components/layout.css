@@ -1,0 +1,180 @@
+/**
+ * Layout Components
+ *
+ * Page-level layout components like headers.
+ * These are NOT web components - just semantic classes.
+ */
+
+@layer components {
+    /* Main content area - grows to push footer to bottom */
+    main {
+        flex: 1;
+        display: flex;
+        flex-direction: column;
+    }
+    .content-container {
+        max-width: var(--container-2xl); /* 1400px */
+        margin: 0 auto;
+        width: 100%;
+    }
+
+    /* Page header */
+    .page-header {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        margin-bottom: var(--space-8);
+        padding-bottom: var(--space-4);
+        border-bottom: 1px solid var(--color-primary);
+    }
+
+    .page-header-with-actions {
+        flex-direction: row;
+        align-items: flex-start;
+        justify-content: space-between;
+    }
+
+    .page-header-content {
+        flex: 1;
+        min-width: 0; /* Allow text truncation */
+    }
+
+    .title-wrap {
+        background-color: var(--color-primary);
+
+        /*background: repeating-linear-gradient(
+            45deg,
+            var(--color-background),
+            var(--color-background) 10px,
+            var(--color-primary) 10px,
+            var(--color-primary) 20px
+        );*/
+        .title {
+            background-color: var(--color-background);
+            margin: 0 auto;
+            h1,
+            h2 {
+                border: 1px solid var(--color-primary);
+
+                font-weight: var(--font-black);
+                font-size: var(--font-size-5xl);
+                margin: 0;
+                padding: var(--space-5) var(--space-6);
+            }
+            p {
+                padding: var(--space-1) var(--space-6);
+                font-size: var(--font-size-base);
+                margin: 0;
+            }
+            max-width: var(--container-2xl); /* 1400px */
+            font-family: var(--font-display);
+            font-weight: var(--font-black);
+            font-size: var(--size-step-7);
+            width: 100%;
+            text-transform: uppercase;
+        }
+    }
+
+    .page-title {
+        margin: 0;
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-bold);
+        line-height: var(--line-height-tight);
+    }
+
+    .page-subtitle {
+        margin: var(--space-10) 0 0 0;
+        font-size: var(--font-size-base);
+        line-height: var(--line-height-normal);
+    }
+
+    .page-header-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        flex-shrink: 0;
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 639px) {
+        .title-wrap {
+            padding: 0px var(--space-3);
+            .title {
+                h1 {
+                    font-size: var(--font-size-4xl);
+                    padding: var(--space-3) var(--space-4);
+                    margin: 0 auto;
+                }
+            }
+        }
+        .page-title {
+            margin: 0;
+            font-size: var(--font-size-xl);
+            font-weight: var(--font-weight-bold);
+            line-height: var(--line-height-tight);
+        }
+        .content-container {
+            padding: 0 var(--space-3);
+        }
+        .page-header-with-actions {
+            flex-direction: column;
+            align-items: stretch;
+        }
+
+        .page-title {
+            font-size: var(--font-size-2xl);
+        }
+
+        .page-header-actions {
+            justify-content: flex-end;
+        }
+    }
+
+    /* Data list (definition list) */
+    .data-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+        margin: 0;
+    }
+
+    .data-list-item {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-1);
+        padding: var(--space-4);
+        background-color: var(--color-background-secondary);
+    }
+
+    .data-list-title {
+        margin: 0;
+        font-size: var(--font-size-xs);
+        font-weight: var(--font-weight-semibold);
+        text-transform: uppercase;
+        letter-spacing: 0.05em;
+    }
+
+    .data-list-value {
+        margin: 0;
+        font-size: var(--font-size-base);
+        line-height: var(--line-height-normal);
+    }
+
+    /* Alternative horizontal layout */
+    @media (min-width: 640px) {
+        .data-list-item {
+            flex-direction: row;
+            align-items: baseline;
+            justify-content: space-between;
+            gap: var(--space-4);
+        }
+
+        .data-list-title {
+            flex-shrink: 0;
+        }
+
+        .data-list-value {
+            text-align: right;
+        }
+    }
+}

@@ -1,0 +1,188 @@
+/**
+ * Post Image Manager Component
+ *
+ * Styles for managing multiple images in blog posts with drag-and-drop ordering.
+ */
+
+@layer components {
+    .post-image-manager {
+        padding: var(--space-6);
+    }
+
+    .manager-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-6);
+        padding-bottom: var(--space-4);
+    }
+
+    .manager-header h3 {
+        font-family: var(--font-display);
+        font-size: var(--size-step-2);
+        font-weight: var(--font-weight-bold);
+        margin: 0;
+    }
+
+    .btn-add-image {
+        padding: var(--space-2) var(--space-4);
+        font-family: var(--font-display);
+        font-size: var(--size-step--2);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        cursor: pointer;
+        transition: all var(--transition-base);
+    }
+
+    .image-uploader-panel {
+        margin-bottom: var(--space-6);
+        padding: var(--space-4);
+    }
+
+    .uploader-header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: var(--space-4);
+        padding-bottom: var(--space-3);
+    }
+
+    .uploader-header h4 {
+        font-family: var(--font-display);
+        font-size: var(--size-step-0);
+        font-weight: var(--font-weight-bold);
+        margin: 0;
+    }
+
+    .btn-cancel {
+        padding: var(--space-2) var(--space-3);
+        font-family: var(--font-display);
+        font-size: var(--size-step--2);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        cursor: pointer;
+        transition: all var(--transition-base);
+    }
+
+    .images-list {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .image-row {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        padding: var(--space-3);
+        cursor: move;
+    }
+
+    .image-row.dragging {
+        opacity: 0.5;
+    }
+
+    .drag-handle {
+        display: flex;
+        align-items: center;
+        flex-shrink: 0;
+        cursor: grab;
+        padding: var(--space-1);
+    }
+
+    .drag-handle:active {
+        cursor: grabbing;
+    }
+
+    .drag-handle svg {
+        display: block;
+    }
+
+    .image-preview {
+        flex-shrink: 0;
+        width: 5rem; /* 80px */
+        height: 5rem; /* 80px */
+        overflow: hidden;
+    }
+
+    .image-preview img {
+        display: block;
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+    }
+
+    .image-content {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+    }
+
+    .primary-badge {
+        padding: var(--space-1) var(--space-2);
+        font-family: var(--font-display);
+        font-size: var(--size-step--2);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        white-space: nowrap;
+    }
+
+    .image-actions {
+        display: flex;
+        align-items: center;
+        gap: var(--space-3);
+        margin-left: auto;
+    }
+
+    .primary-checkbox {
+        display: flex;
+        align-items: center;
+        gap: var(--space-2);
+        font-family: var(--font-display);
+        font-size: var(--size-step--2);
+        font-weight: var(--font-weight-medium);
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        cursor: pointer;
+        white-space: nowrap;
+    }
+
+    .primary-checkbox input[type="radio"] {
+        cursor: pointer;
+    }
+
+    .btn-remove {
+        padding: var(--space-2) var(--space-3);
+        font-family: var(--font-display);
+        font-size: var(--size-step--2);
+        font-weight: var(--font-weight-bold);
+        text-transform: uppercase;
+        letter-spacing: var(--letter-spacing-wide);
+        cursor: pointer;
+        transition: all var(--transition-base);
+    }
+
+    /* Responsive adjustments */
+    @media (max-width: 767px) {
+        /* var(--container-md) */
+        .image-row {
+            flex-wrap: wrap;
+        }
+
+        .image-content {
+            flex-direction: column;
+            align-items: flex-start;
+            width: 100%;
+        }
+
+        .image-actions {
+            margin-left: 0;
+            width: 100%;
+            justify-content: space-between;
+        }
+    }
+}

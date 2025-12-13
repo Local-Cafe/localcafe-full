@@ -1,0 +1,21 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>New Menu Item</h1>
+  </.title>
+
+  <div class="content-container">
+    <.menu_item_form
+      changeset={@changeset}
+      action={~p"/menu"}
+      return_to={~p"/menu"}
+      locations={@locations}
+    />
+  </div>
+</Layouts.app>

@@ -1,0 +1,127 @@
+<.form :let={f} for={@changeset} action={@action} data-slug-form="">
+  <.input
+    field={f[:title]}
+    type="text"
+    label="Title"
+    placeholder="Enter menu item name"
+    data-slug-source=""
+  />
+  <.input
+    field={f[:slug]}
+    type="text"
+    label="Slug"
+    hint="Lowercase letters, numbers, and hyphens only"
+    placeholder="my-menu-item"
+    data-slug-target=""
+  />
+  <.input
+    field={f[:description]}
+    type="textarea"
+    label="Description"
+    placeholder="Describe this menu item"
+  />
+  <.input
+    field={f[:tags]}
+    type="text"
+    label="Tags"
+    value={Enum.map_join(@changeset.data.tags || [], ", ", & &1.name)}
+    hint="Comma-separated tags (e.g. vegetarian, gluten-free, bestseller)"
+    placeholder="vegetarian, gluten-free"
+  />
+
+  <div :if={@locations && length(@locations) > 1} class="form-group">
+    <label class="form-label">Locations</label>
+    <p class="form-help">
+      Select the locations where this item is available. Leave all unchecked if available at all locations.
+    </p>
+    <div class="checkbox-group">
+      <%= for location <- @locations do %>
+        <%
+        # Get the current location IDs from the changeset
+        current_location_ids =
+          (@changeset.data.locations || [])
+          |> Enum.map(& &1.id)
+
+        is_checked = location.id in current_location_ids
+        %>
+        <label class="checkbox-label">
+          <input
+            type="checkbox"
+            name="menu_item[location_ids][]"
+            value={location.id}
+            checked={is_checked}
+          />
+          {location.name}
+        </label>
+      <% end %>
+    </div>
+  </div>
+
+  <.input
+    field={f[:position]}
+    type="number"
+    label="Position"
+    hint="Display order (lower numbers appear first)"
+    placeholder="0"
+    min="0"
+    step="1"
+  />
+  <.input field={f[:available]} type="checkbox" label="Available" />
+  <.input
+    field={f[:special]}
+    type="checkbox"
+    label="Featured as Special"
+    hint="Mark this item as a special to display it prominently on the home page"
+  />
+
+  <div class="form-section">
+    <h3 class="section-title">Menu Item Images</h3>
+    <p class="section-description">
+      Add images for this menu item. The first image or the one marked as primary will be the featured image.
+    </p>
+    <post-image-manager
+      form-name="menu_item"
+      images-data={Jason.encode!(@changeset.data.images || [])}
+    >
+    </post-image-manager>
+  </div>
+
+  <div class="form-section">
+    <h3 class="section-title">Prices</h3>
+    <p class="section-description">
+      Add one or more prices. For single price items, leave the label blank. For multiple prices (e.g., Small/Large), add a label for each.
+    </p>
+    <div id="prices-manager" data-prices={Jason.encode!(@changeset.data.prices || [])}>
+      <input
+        type="hidden"
+        name="menu_item[prices]"
+        id="menu_item_prices"
+        value={Jason.encode!(@changeset.data.prices || [])}
+      />
+      <div class="prices-list"></div>
+      <button type="button" class="btn btn-secondary add-price-btn">Add Price</button>
+    </div>
+  </div>
+
+  <div class="form-section">
+    <h3 class="section-title">Variants/Options</h3>
+    <p class="section-description">
+      Add optional extras or modifications (e.g., "Extra Cheese" for $2.00, "No Onion" for free).
+    </p>
+    <div id="variants-manager" data-variants={Jason.encode!(@changeset.data.variants || [])}>
+      <input
+        type="hidden"
+        name="menu_item[variants]"
+        id="menu_item_variants"
+        value={Jason.encode!(@changeset.data.variants || [])}
+      />
+      <div class="variants-list"></div>
+      <button type="button" class="btn btn-secondary add-variant-btn">Add Variant</button>
+    </div>
+  </div>
+
+  <footer>
+    <.button variant="primary">Save Menu Item</.button>
+    <.button :if={@return_to} href={@return_to}>Cancel</.button>
+  </footer>
+</.form>

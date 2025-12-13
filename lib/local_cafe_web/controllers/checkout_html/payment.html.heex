@@ -1,0 +1,130 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Payment</h1>
+  </.title>
+
+  <div class="checkout-layout">
+    <form id="checkout-form" data-client-secret={@client_secret}>
+      <%!-- Hidden fields to pass customer info --%>
+      <input type="hidden" name="order[customer_name]" value={@customer_name} />
+      <input type="hidden" name="order[customer_email]" value={@customer_email} />
+
+      <div class="checkout-grid">
+        <%!-- Main Column (Left) --%>
+        <div class="checkout-main">
+          <%!-- Order Note --%>
+          <div class="checkout-section">
+            <h2>Order Note</h2>
+            <div class="form-field">
+              <label for="customer_note">Add special instructions (Optional)</label>
+              <textarea
+                id="customer_note"
+                name="order[customer_note]"
+                placeholder="Any special instructions or notes for your order"
+                rows="4"
+                class="form-textarea"
+              ></textarea>
+            </div>
+          </div>
+
+          <%!-- Payment Information --%>
+          <div class="checkout-section">
+            <h2>Payment Information</h2>
+            <div class="form-field">
+              <div id="payment-element">
+                <%!-- Stripe Payment Element will be mounted here --%>
+              </div>
+              <div id="payment-message" class="payment-message hidden"></div>
+            </div>
+
+            <%!-- Payment Actions --%>
+            <div class="checkout-actions">
+              <a href={~p"/checkout"} class="btn btn-secondary">
+                ← Back
+              </a>
+
+              <button type="submit" id="submit-button" class="btn btn-primary btn-large">
+                <span id="button-text">Pay ${float_to_currency(@total)}</span>
+                <span id="spinner" class="spinner hidden"></span>
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Sidebar Column (Right) --%>
+        <div class="checkout-sidebar">
+          <%!-- Customer Information --%>
+          <div class="checkout-section">
+            <h2>Customer</h2>
+            <div class="customer-info-display">
+              <p><strong>Name:</strong> {@customer_name}</p>
+              <p><strong>Email:</strong> {@customer_email}</p>
+            </div>
+          </div>
+
+          <%!-- Order Summary with Collapsible Details --%>
+          <div class="checkout-section">
+            <h2>Order Summary</h2>
+
+            <div class="order-summary-basic">
+              <div class="summary-row">
+                <span>Items:</span>
+                <span>{Enum.reduce(@cart, 0, fn item, acc -> acc + item.quantity end)}</span>
+              </div>
+              <div class="summary-row">
+                <span>Subtotal:</span>
+                <span>${float_to_currency(@subtotal)}</span>
+              </div>
+              <div :if={@tip_amount > 0} class="summary-row">
+                <span>Tip:</span>
+                <span>${float_to_currency(@tip_amount)}</span>
+              </div>
+              <div class="summary-row summary-total">
+                <span>Total:</span>
+                <span class="total-amount">${float_to_currency(@total)}</span>
+              </div>
+            </div>
+
+            <details class="order-details">
+              <summary class="order-details-toggle">Show order details</summary>
+              <div class="order-details-content">
+                <div :for={item <- @cart} class="order-detail-item">
+                  <div class="order-detail-info">
+                    <h4>{item.item_title}</h4>
+                    <p :if={item.base_price_label} class="item-size">{item.base_price_label}</p>
+                    <div :if={item.selected_variants != []} class="item-variants">
+                      <strong>Extras:</strong>
+                      <span :for={variant <- item.selected_variants}>{variant.name}</span>
+                    </div>
+                    <p :if={item.customer_note} class="item-note">
+                      <strong>Note:</strong> {item.customer_note}
+                    </p>
+                    <p class="item-quantity">Qty: {item.quantity}</p>
+                  </div>
+                  <div class="order-detail-price">
+                    ${float_to_currency(
+                      Enum.reduce(item.selected_variants, item.base_price_amount, fn v, acc ->
+                        acc + v.price
+                      end) * item.quantity
+                    )}
+                  </div>
+                </div>
+              </div>
+            </details>
+          </div>
+        </div>
+      </div>
+    </form>
+  </div>
+</Layouts.app>
+
+<script type="text/javascript">
+  window.stripePublishableKey = "<%= @stripe_publishable_key %>";
+</script>

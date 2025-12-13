@@ -1,0 +1,97 @@
+/**
+ * Color Tokens
+ *
+ * Semantic color system for light mode only.
+ * Uses OKLCH color space for perceptually uniform colors.
+ */
+
+@layer tokens {
+    :root {
+        /* Literal color palette - OKLCH format */
+        /* These are never used directly in components, only for defining semantic colors */
+        --literal-black: oklch(0.156 0.01 240);
+        --literal-white: oklch(0.99 0 0);
+
+        /* Literal slate scale - cool greys with subtle blue hue */
+        --literal-slate-50: oklch(0.985 0.003 240);  /* Near white with barely perceptible blue */
+        --literal-slate-100: oklch(0.97 0.005 240);  /* Very light slate */
+        --literal-slate-200: oklch(0.93 0.008 240);  /* Light slate */
+        --literal-slate-300: oklch(0.85 0.01 240);   /* Soft slate */
+        --literal-slate-400: oklch(0.70 0.012 240);  /* Medium-light slate */
+        --literal-slate-500: oklch(0.55 0.015 240);  /* Medium slate */
+        --literal-slate-600: oklch(0.45 0.015 240);  /* Medium-dark slate */
+        --literal-slate-700: oklch(0.35 0.012 240);  /* Dark slate */
+        --literal-slate-800: oklch(0.25 0.01 240);   /* Very dark slate */
+        --literal-slate-900: oklch(0.18 0.008 240);  /* Nearly black slate */
+
+        /* Literal semantic state colors */
+        --literal-error: oklch(0.55 0.22 25);
+        --literal-error-light: oklch(0.96 0.05 25);
+        --literal-success: oklch(0.65 0.17 145);
+        --literal-success-light: oklch(0.96 0.05 145);
+        --literal-warning: oklch(0.72 0.15 70);
+        --literal-warning-light: oklch(0.96 0.05 70);
+    }
+
+    /* Light mode color definitions */
+    :root {
+        /* Background colors */
+        --color-background: var(--literal-white);
+        --color-background-secondary: var(--literal-slate-50);
+        --color-background-tertiary: var(--literal-slate-100);
+
+        /* Foreground/text colors */
+        --color-foreground: var(--literal-slate-900);
+        --color-foreground-secondary: var(--literal-slate-700);
+        --color-foreground-tertiary: var(--literal-slate-600);
+        --color-foreground-inverse: var(--literal-white);
+
+        /* Primary brand color - medium slate for contrast */
+        --color-primary: var(--literal-slate-700);
+        --color-primary-hover: var(--literal-slate-800);
+        --color-primary-contrast: var(--literal-white);
+
+        /* Border colors */
+        --color-border: var(--literal-slate-300);
+        --color-border-subtle: var(--literal-slate-200);
+        --color-border-strong: var(--literal-slate-700);
+
+        /* Focus color */
+        --color-focus: var(--literal-slate-600);
+
+        /* State colors */
+        --color-error: var(--literal-error);
+        --color-error-background: var(--literal-error-light);
+        --color-success: var(--literal-success);
+        --color-success-background: var(--literal-success-light);
+        --color-warning: var(--literal-warning);
+        --color-warning-background: var(--literal-warning-light);
+
+        /* Grayscale - direct mapping to slate scale */
+        --color-gray-50: var(--literal-slate-50);
+        --color-gray-100: var(--literal-slate-100);
+        --color-gray-200: var(--literal-slate-200);
+        --color-gray-300: var(--literal-slate-300);
+        --color-gray-400: var(--literal-slate-400);
+        --color-gray-500: var(--literal-slate-500);
+        --color-gray-600: var(--literal-slate-600);
+        --color-gray-700: var(--literal-slate-700);
+        --color-gray-800: var(--literal-slate-800);
+        --color-gray-900: var(--literal-slate-900);
+
+        /* Accent colors for brutalist design */
+        --color-gold: oklch(0.76 0.12 85);
+        --color-gold-dark: oklch(0.65 0.14 80);
+        --color-cyan: oklch(0.70 0.15 195);
+        --color-magenta: oklch(0.65 0.25 330);
+
+        /* Text semantic colors (aliases for consistency with other components) */
+        --color-text-primary: var(--color-foreground);
+        --color-text-secondary: var(--color-foreground-secondary);
+        --color-text-tertiary: var(--color-foreground-tertiary);
+
+        /* Surface colors (aliases for consistency with other components) */
+        --color-surface-primary: var(--color-background);
+        --color-surface-secondary: var(--color-background-secondary);
+    }
+}

@@ -1,0 +1,178 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <:admin_bar>
+    <.button navigate={~p"/menu/#{@menu_item}/edit"}>
+      Edit
+    </.button>
+    <.button
+      phx-click="delete"
+      data-confirm="Are you sure you want to delete this menu item?"
+      class="btn-danger"
+    >
+      Delete
+    </.button>
+  </:admin_bar>
+
+  <div class="menu-item-detail">
+    <div class="menu-item-detail-container">
+      <%!-- Left Column: Image and Info --%>
+      <div class="menu-item-detail-left">
+        <%!-- Image Section --%>
+        <div
+          :if={@primary_image}
+          class="menu-item-detail-image-section"
+          data-slideshow={length(@menu_item.images) > 1}
+        >
+          <img
+            :for={{image, idx} <- Enum.with_index(@menu_item.images)}
+            :if={length(@menu_item.images) > 1}
+            src={image.full_url}
+            alt={"#{@menu_item.title} - Image #{idx + 1}"}
+            class={"menu-item-detail-image #{if idx == 0, do: "slide-active", else: ""}"}
+            data-slide-index={idx}
+          />
+
+          <img
+            :if={length(@menu_item.images) == 1}
+            src={@primary_image.full_url}
+            alt={@menu_item.title}
+            class="menu-item-detail-image"
+          />
+        </div>
+
+        <%!-- Info Section --%>
+        <div class="menu-item-detail-info">
+          <h1 class="menu-item-detail-title">{@menu_item.title}</h1>
+
+          <div :if={@menu_item.tags != []} class="menu-item-detail-tags">
+            <a :for={tag <- @menu_item.tags} href={"/?tag=#{tag.name}#menu"} class="tag">
+              {tag.name}
+            </a>
+          </div>
+
+          <p class="menu-item-detail-description">{@menu_item.description}</p>
+        </div>
+      </div>
+
+      <%!-- Right Column: Order Form --%>
+      <div class="menu-item-detail-right">
+        <%!-- Price Display (only for single-price items) --%>
+        <div :if={length(@menu_item.prices) == 1} class="menu-item-prices">
+          <div class="menu-item-price-single">
+            <span class="price-amount">
+              ${float_to_currency(hd(@menu_item.prices).amount)}
+            </span>
+          </div>
+        </div>
+
+        <%!-- Add to Cart Form --%>
+        <div class="menu-item-order-form">
+          <h2>Add to Cart</h2>
+          <.form
+            :let={f}
+            for={%{}}
+            as={:cart}
+            action={~p"/cart/add"}
+            method="post"
+            data-order-form=""
+          >
+            <input type="hidden" name="cart[menu_item_id]" value={@menu_item.id} />
+
+            <%!-- Price Selection (if multiple) --%>
+            <fieldset :if={length(@menu_item.prices) > 1} class="price-selection">
+              <legend>Select Size</legend>
+              <%= for {price, idx} <- Enum.with_index(@menu_item.prices) do %>
+                <label class="price-option">
+                  <input
+                    type="radio"
+                    name="cart[price_index]"
+                    value={idx}
+                    checked={idx == 0}
+                    data-price-radio
+                    data-amount={price.amount}
+                  />
+                  <span class="price-label">{price.label}</span>
+                  <span class="price-amount">
+                    ${float_to_currency(price.amount)}
+                  </span>
+                </label>
+              <% end %>
+            </fieldset>
+
+            <input
+              :if={length(@menu_item.prices) == 1}
+              type="hidden"
+              name="cart[price_index]"
+              value="0"
+              data-base-price={
+                if length(@menu_item.prices) > 0, do: hd(@menu_item.prices).amount, else: 0
+              }
+            />
+
+            <%!-- Variant Selection (if any) --%>
+            <fieldset
+              :if={@menu_item.variants != [] and length(@menu_item.variants) > 0}
+              class="variant-selection"
+            >
+              <legend>Optional Extras</legend>
+              <label
+                :for={{variant, idx} <- Enum.with_index(@menu_item.variants)}
+                class="variant-option"
+              >
+                <input
+                  type="checkbox"
+                  name="cart[variant_indices][]"
+                  value={idx}
+                  data-variant-checkbox
+                  data-price={variant.price}
+                />
+                <span class="variant-name">{variant.name}</span>
+                <span :if={variant.price > 0} class="variant-price">
+                  + ${float_to_currency(variant.price)}
+                </span>
+              </label>
+            </fieldset>
+
+            <%!-- Subtotal Display --%>
+            <div class="order-subtotal">
+              <span class="subtotal-label">Subtotal:</span>
+              <span class="subtotal-amount" data-subtotal>
+                <%= if length(@menu_item.prices) > 0 do %>
+                  ${float_to_currency(hd(@menu_item.prices).amount)}
+                <% else %>
+                  $0.00
+                <% end %>
+              </span>
+            </div>
+
+            <%!-- Special Instructions --%>
+            <.input
+              field={f[:customer_note]}
+              type="textarea"
+              label="Special Instructions (Optional)"
+              placeholder="e.g., No onions, extra sauce"
+            />
+
+            <%!-- Submit Button --%>
+            <.button type="submit" variant="primary" class="btn-large btn-block btn-primary">
+              Add to Cart
+            </.button>
+          </.form>
+        </div>
+      </div>
+    </div>
+
+    <%!-- Back Link --%>
+    <div class="menu-item-back">
+      <a href={~p"/#menu"} class="btn btn-secondary">
+        ← Back to Menu
+      </a>
+    </div>
+  </div>
+</Layouts.app>

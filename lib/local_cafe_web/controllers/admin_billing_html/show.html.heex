@@ -1,0 +1,167 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <div class="page-header">
+      <.link navigate={~p"/admin/billing"} class="back-link">
+        ← Back to Billing
+      </.link>
+      <h1>Payment Details</h1>
+    </div>
+  </.title>
+
+  <div class="payment-detail-page">
+    <%!-- Payment Summary Card --%>
+    <div class="payment-summary-card">
+      <div class="payment-summary-header">
+        <div class="payment-status-container">
+          <span class={"payment-status-badge payment-status-#{@payment.status}"}>
+            {String.replace(@payment.status, "_", " ") |> String.capitalize()}
+          </span>
+        </div>
+        <div class="payment-date">
+          {Calendar.strftime(@payment.inserted_at, "%B %d, %Y at %H:%M")}
+        </div>
+      </div>
+
+      <div class="payment-summary-body">
+        <%!-- Customer Information --%>
+        <div class="payment-detail-section">
+          <h3>Customer Information</h3>
+          <dl class="payment-detail-list">
+            <dt>Email</dt>
+            <dd>{@payment.customer_email || "N/A"}</dd>
+            <%= if @payment.receipt_email && @payment.receipt_email != @payment.customer_email do %>
+              <dt>Receipt Email</dt>
+              <dd>{@payment.receipt_email}</dd>
+            <% end %>
+            <%= if @payment.card_brand && @payment.card_last4 do %>
+              <dt>Payment Method</dt>
+              <dd>{String.capitalize(@payment.card_brand)} ···· {@payment.card_last4}</dd>
+            <% end %>
+            <%= if @payment.card_exp_month && @payment.card_exp_year do %>
+              <dt>Card Expiry</dt>
+              <dd>
+                {String.pad_leading(to_string(@payment.card_exp_month), 2, "0")}/{@payment.card_exp_year}
+              </dd>
+            <% end %>
+          </dl>
+        </div>
+
+        <%!-- Payment Amounts --%>
+        <div class="payment-detail-section">
+          <h3>Payment Amounts</h3>
+          <dl class="payment-detail-list">
+            <dt>Amount</dt>
+            <dd class="amount-value amount-total">
+              ${float_to_currency(@payment.amount)} {@payment.currency
+              |> String.upcase()}
+            </dd>
+            <%= if @payment.amount_received && @payment.amount_received > 0 do %>
+              <dt>Amount Received</dt>
+              <dd class="amount-value">
+                ${float_to_currency(@payment.amount_received)}
+              </dd>
+            <% end %>
+            <%= if @payment.amount_refunded && @payment.amount_refunded > 0 do %>
+              <dt>Amount Refunded</dt>
+              <dd class="amount-value amount-refunded">
+                ${float_to_currency(@payment.amount_refunded)}
+              </dd>
+            <% end %>
+            <%= if @payment.fee do %>
+              <dt>Processing Fee</dt>
+              <dd class="amount-value amount-fee">
+                ${float_to_currency(@payment.fee)}
+              </dd>
+            <% end %>
+            <%= if @payment.net do %>
+              <dt>Net Amount</dt>
+              <dd class="amount-value amount-net">
+                ${float_to_currency(@payment.net)}
+              </dd>
+            <% end %>
+          </dl>
+        </div>
+
+        <%!-- Stripe Information --%>
+        <div class="payment-detail-section">
+          <h3>Stripe Information</h3>
+          <dl class="payment-detail-list">
+            <dt>Payment Intent ID</dt>
+            <dd><code>{@payment.stripe_payment_intent_id}</code></dd>
+            <%= if @payment.stripe_charge_id do %>
+              <dt>Charge ID</dt>
+              <dd><code>{@payment.stripe_charge_id}</code></dd>
+            <% end %>
+            <%= if @payment.stripe_customer_id do %>
+              <dt>Customer ID</dt>
+              <dd><code>{@payment.stripe_customer_id}</code></dd>
+            <% end %>
+            <%= if @payment.balance_transaction_id do %>
+              <dt>Balance Transaction ID</dt>
+              <dd><code>{@payment.balance_transaction_id}</code></dd>
+            <% end %>
+            <%= if @payment.receipt_url do %>
+              <dt>Receipt</dt>
+              <dd>
+                <a href={@payment.receipt_url} target="_blank" rel="noopener noreferrer">
+                  View Receipt →
+                </a>
+              </dd>
+            <% end %>
+          </dl>
+        </div>
+
+        <%= if @payment.description do %>
+          <div class="payment-detail-section">
+            <h3>Description</h3>
+            <p>{@payment.description}</p>
+          </div>
+        <% end %>
+      </div>
+    </div>
+
+    <%!-- Event History --%>
+    <div class="payment-events-card">
+      <h2>Event History</h2>
+      <%= if @payment.events && length(@payment.events) > 0 do %>
+        <div class="payment-events-timeline">
+          <%= for event <- Enum.reverse(@payment.events) do %>
+            <div class="payment-event">
+              <div class="event-marker"></div>
+              <div class="event-content">
+                <div class="event-header">
+                  <span class="event-type">{event["type"]}</span>
+                  <span class="event-timestamp">
+                    <%= case DateTime.from_iso8601(event["timestamp"]) do %>
+                      <% {:ok, datetime, _} -> %>
+                        {Calendar.strftime(datetime, "%b %d, %Y at %H:%M:%S")}
+                      <% _ -> %>
+                        {event["timestamp"]}
+                    <% end %>
+                  </span>
+                </div>
+                <%= if event["data"] && map_size(event["data"]) > 0 do %>
+                  <div class="event-data">
+                    <details>
+                      <summary>Event Data</summary>
+                      <pre><code>{Jason.encode!(event["data"], pretty: true)}</code></pre>
+                    </details>
+                  </div>
+                <% end %>
+              </div>
+            </div>
+          <% end %>
+        </div>
+      <% else %>
+        <p class="no-events">No events recorded for this payment.</p>
+      <% end %>
+    </div>
+  </div>
+</Layouts.app>

@@ -1,0 +1,253 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <:hero>
+    <%!-- Hero Section --%>
+    <div :if={@hero_slides != []} class="hero">
+      <%!-- Multiple slides: slideshow with fade animation --%>
+      <%= if length(@hero_slides) > 1 do %>
+        <div class="hero-slideshow">
+          <img
+            :for={slide <- @hero_slides}
+            :if={slide.image && slide.image.full_url}
+            src={slide.image.full_url}
+            alt={slide.tagline}
+            class="hero-slide"
+          />
+        </div>
+        <%!-- Animated taglines for slideshow --%>
+        <p :for={slide <- @hero_slides} class="hero-tagline-animated">
+          {slide.tagline}
+        </p>
+      <% else %>
+        <%!-- Single slide: static image and tagline --%>
+        <% slide = List.first(@hero_slides) %>
+        <img
+          :if={slide.image && slide.image.full_url}
+          src={slide.image.full_url}
+          alt={slide.tagline}
+        />
+        <p class="hero-tagline">{slide.tagline}</p>
+      <% end %>
+    </div>
+  </:hero>
+
+  <.title :if={@specials != []}>
+    <h2>Specials</h2>
+  </.title>
+
+  <div class="content-container">
+    <%!-- Specials Section --%>
+    <section :if={@specials != []} class="specials-section">
+      <div class="specials-grid">
+        <div :for={special <- @specials} class="special-card">
+          <LocalCafeWeb.MenuItemHTML.menu_item_card
+            menu_item={special}
+            all_locations={@locations}
+            use_full_image={length(@specials) == 1}
+          />
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <.title>
+    <h2 id="menu">
+      <%= cond do %>
+        <% assigns[:current_location] && assigns[:current_tag] -> %>
+          {String.capitalize(@current_tag)} at {@current_location.name}
+        <% assigns[:current_location] -> %>
+          {@current_location.name} Menu
+        <% assigns[:current_tag] -> %>
+          {String.capitalize(@current_tag)} Menu
+        <% true -> %>
+          Menu
+      <% end %>
+    </h2>
+  </.title>
+
+  <div class="content-container">
+    <section class="menu-section">
+      <div class="menu-container">
+        <%!-- Location Filters --%>
+        <div :if={length(@locations) > 1} class="tags-section">
+          <div class="tags-list">
+            <% # Build URL with current tag but no location
+            base_query = if @current_tag, do: %{"tag" => @current_tag}, else: %{} %>
+            <a
+              href={"#{~p"/?#{base_query}"}#menu"}
+              class={["tag", @current_location == nil && "tag-active"]}
+            >
+              All Locations
+            </a>
+            <%= for location <- @locations do %>
+              <% # Build URL with current tag and this location
+              query = Map.put(base_query, "location", location.slug) %>
+              <a
+                href={"#{~p"/?#{query}"}#menu"}
+                class={[
+                  "tag",
+                  @current_location && @current_location.id == location.id && "tag-active"
+                ]}
+              >
+                {location.name}
+              </a>
+            <% end %>
+          </div>
+        </div>
+
+        <%!-- Tag Filters --%>
+        <div :if={@tag_counts != []} class="tags-section">
+          <div class="tags-list">
+            <% # Build URL with current location but no tag
+            base_query =
+              if @current_location, do: %{"location" => @current_location.slug}, else: %{} %>
+            <a
+              href={"#{~p"/?#{base_query}"}#menu"}
+              class={["tag", @current_tag == nil && "tag-active"]}
+            >
+              All Items
+            </a>
+            <%= for {tag, count} <- @tag_counts do %>
+              <% # Build URL with current location and this tag
+              query = Map.put(base_query, "tag", tag) %>
+              <a
+                href={"#{~p"/?#{query}"}#menu"}
+                class={["tag", @current_tag == tag && "tag-active"]}
+              >
+                {tag} ({count})
+              </a>
+            <% end %>
+          </div>
+        </div>
+
+        <%!-- Menu Items Grid --%>
+        <%= if @menu_pagination.menu_items == [] do %>
+          <div class="empty-state">
+            <p>No menu items found.</p>
+            <.button
+              :if={@current_scope && @current_scope.user && @current_scope.user.admin}
+              navigate={~p"/menu/new"}
+            >
+              Create First Menu Item
+            </.button>
+          </div>
+        <% else %>
+          <div class="menu-grid">
+            <LocalCafeWeb.MenuItemHTML.menu_item_card
+              :for={menu_item <- @menu_pagination.menu_items}
+              menu_item={menu_item}
+              all_locations={@locations}
+            />
+          </div>
+
+          <div :if={@menu_pagination.total_pages > 1} class="pagination">
+            <a
+              :if={@menu_pagination.page > 1}
+              href={
+                build_home_pagination_url(
+                  @menu_pagination.page - 1,
+                  @current_tag,
+                  @current_location
+                )
+              }
+              class="pagination-link"
+            >
+              ← Previous
+            </a>
+
+            <span class="pagination-info">
+              Page {@menu_pagination.page} of {@menu_pagination.total_pages}
+            </span>
+
+            <a
+              :if={@menu_pagination.page < @menu_pagination.total_pages}
+              href={
+                build_home_pagination_url(
+                  @menu_pagination.page + 1,
+                  @current_tag,
+                  @current_location
+                )
+              }
+              class="pagination-link"
+            >
+              Next →
+            </a>
+          </div>
+        <% end %>
+      </div>
+    </section>
+
+    <%!-- Latest Blog Posts Section --%>
+    <%= if @latest_posts != [] do %>
+      <section class="home-section">
+        <div class="home-section-header">
+          <span class="home-section-title">Latest Posts</span>
+          <.link navigate={~p"/posts"} class="home-section-link">
+            View all posts →
+          </.link>
+        </div>
+
+        <div class="blog-grid">
+          <%= for post <- @latest_posts do %>
+            <LocalCafeWeb.PostHTML.blog_card post={post} />
+          <% end %>
+        </div>
+      </section>
+    <% end %>
+  </div>
+
+  <.title>
+    <h2 id="locations">Locations</h2>
+  </.title>
+
+  <%!-- Locations Section --%>
+  <div :if={@locations != []} id="locations" class="content-container">
+    <div class="locations-grid">
+      <div :for={location <- @locations} class="location-card">
+        <h3 class="location-name">{location.name}</h3>
+        <div :if={location.description} class="location-description">
+          {location.description}
+        </div>
+        <div class="location-content">
+          <div class="location-info">
+            <div class="location-section">
+              <h4>Address</h4>
+              <p :if={location.street}>{location.street}</p>
+              <p :if={location.city_state}>{location.city_state}</p>
+            </div>
+
+            <div :if={location.hours && location.hours != []} class="location-section">
+              <h4>Hours</h4>
+              <p :for={hour <- location.hours}>{hour}</p>
+            </div>
+
+            <div class="location-section">
+              <h4>Contact</h4>
+              <p :if={location.phone}>Phone: {location.phone}</p>
+              <p :if={location.email}>Email: {location.email}</p>
+            </div>
+
+            <div :if={length(@locations) > 1} class="location-menu-link">
+              <.link href={"/?location=#{location.slug}#menu"} class="btn btn-primary">
+                View Menu
+              </.link>
+            </div>
+          </div>
+          <div :if={location.image && location.image["full_url"]} class="location-map">
+            <img
+              src={location.image["full_url"]}
+              alt={"Image for #{location.name}"}
+              loading="lazy"
+            />
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

@@ -1,0 +1,238 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Admin Dashboard</h1>
+  </.title>
+
+  <div class="admin-dashboard-page">
+    <%!-- Left Column Navigation --%>
+    <aside class="admin-sidebar">
+      <nav class="admin-nav">
+        <.link navigate={~p"/admin/orders"} class="admin-nav-link">
+          Orders
+        </.link>
+        <.link navigate={~p"/menu/new"} class="admin-nav-link">
+          Add Menu Item
+        </.link>
+        <.link navigate={~p"/admin/locations"} class="admin-nav-link">
+          Locations
+        </.link>
+        <.link navigate={~p"/admin/hero-slides"} class="admin-nav-link">
+          Hero Slides
+        </.link>
+        <.link navigate={~p"/posts/new"} class="admin-nav-link">
+          New Post
+        </.link>
+        <.link navigate={~p"/admin/users"} class="admin-nav-link">
+          Users
+        </.link>
+        <.link navigate={~p"/admin/billing"} class="admin-nav-link">
+          Billing
+        </.link>
+        <.link navigate={~p"/admin/comments"} class="admin-nav-link">
+          Comments
+        </.link>
+        <.link navigate={~p"/admin/analytics"} class="admin-nav-link">
+          Analytics
+        </.link>
+      </nav>
+    </aside>
+
+    <%!-- Main Content --%>
+    <div class="admin-main">
+      <%!-- Statistics Grid --%>
+      <div class="stats-grid">
+        <%!-- Orders Card --%>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <h3 class="stat-card-title">Orders</h3>
+            <.link navigate={~p"/admin/orders"} class="stat-card-link">
+              View all →
+            </.link>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-primary">
+              <span class="stat-value">{@order_stats.total}</span>
+              <span class="stat-label">Total Orders</span>
+            </div>
+            <div class="stat-breakdown">
+              <%= if @order_stats.pending > 0 do %>
+                <div class="stat-item stat-item-warning">
+                  <span class="stat-item-value">{@order_stats.pending}</span>
+                  <span class="stat-item-label">Pending</span>
+                </div>
+              <% end %>
+              <%= if @order_stats.paid > 0 do %>
+                <div class="stat-item">
+                  <span class="stat-item-value">{@order_stats.paid}</span>
+                  <span class="stat-item-label">Paid</span>
+                </div>
+              <% end %>
+              <%= if @order_stats.preparing > 0 do %>
+                <div class="stat-item">
+                  <span class="stat-item-value">{@order_stats.preparing}</span>
+                  <span class="stat-item-label">Preparing</span>
+                </div>
+              <% end %>
+              <%= if @order_stats.ready > 0 do %>
+                <div class="stat-item">
+                  <span class="stat-item-value">{@order_stats.ready}</span>
+                  <span class="stat-item-label">Ready</span>
+                </div>
+              <% end %>
+              <div class="stat-item">
+                <span class="stat-item-value">{@order_stats.completed}</span>
+                <span class="stat-item-label">Completed</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Comments Card --%>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <h3 class="stat-card-title">Comments</h3>
+            <.link navigate={~p"/admin/comments"} class="stat-card-link">
+              View all →
+            </.link>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-primary">
+              <span class="stat-value">{@comment_stats.total}</span>
+              <span class="stat-label">Total Comments</span>
+            </div>
+            <div class="stat-breakdown">
+              <div class="stat-item">
+                <span class="stat-item-value">{@comment_stats.approved}</span>
+                <span class="stat-item-label">Approved</span>
+              </div>
+              <div class="stat-item stat-item-warning">
+                <span class="stat-item-value">{@comment_stats.pending}</span>
+                <span class="stat-item-label">Pending</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Billing Card --%>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <h3 class="stat-card-title">Billing</h3>
+            <.link navigate={~p"/admin/billing"} class="stat-card-link">
+              View all →
+            </.link>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-primary">
+              <span class="stat-value">
+                ${float_to_currency(@billing_stats.succeeded_net)}
+              </span>
+              <span class="stat-label">Net Revenue</span>
+            </div>
+            <div class="stat-breakdown">
+              <div class="stat-item">
+                <span class="stat-item-value">{@billing_stats.succeeded_count}</span>
+                <span class="stat-item-label">Succeeded</span>
+              </div>
+              <%= if @billing_stats.pending_count > 0 do %>
+                <div class="stat-item stat-item-warning">
+                  <span class="stat-item-value">{@billing_stats.pending_count}</span>
+                  <span class="stat-item-label">Pending</span>
+                </div>
+              <% end %>
+              <%= if @billing_stats.refunded_count > 0 do %>
+                <div class="stat-item">
+                  <span class="stat-item-value">{@billing_stats.refunded_count}</span>
+                  <span class="stat-item-label">Refunded</span>
+                </div>
+              <% end %>
+              <%= if @billing_stats.failed_count > 0 do %>
+                <div class="stat-item">
+                  <span class="stat-item-value">{@billing_stats.failed_count}</span>
+                  <span class="stat-item-label">Failed</span>
+                </div>
+              <% end %>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Users Card --%>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <h3 class="stat-card-title">Users</h3>
+            <.link navigate={~p"/admin/users"} class="stat-card-link">
+              View all →
+            </.link>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-primary">
+              <span class="stat-value">{@user_stats.total}</span>
+              <span class="stat-label">Total Users</span>
+            </div>
+            <div class="stat-breakdown">
+              <div class="stat-item">
+                <span class="stat-item-value">{@user_stats.admins}</span>
+                <span class="stat-item-label">Admins</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-item-value">{@user_stats.trusted}</span>
+                <span class="stat-item-label">Trusted</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-item-value">{@user_stats.regular}</span>
+                <span class="stat-item-label">Regular</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Posts Card --%>
+        <div class="stat-card">
+          <div class="stat-card-header">
+            <h3 class="stat-card-title">Posts</h3>
+            <.link navigate={~p"/posts"} class="stat-card-link">
+              View all →
+            </.link>
+          </div>
+          <div class="stat-card-body">
+            <div class="stat-primary">
+              <span class="stat-value">{@post_stats.total}</span>
+              <span class="stat-label">Total Posts</span>
+            </div>
+            <div class="stat-breakdown">
+              <div class="stat-item">
+                <span class="stat-item-value">{@post_stats.published}</span>
+                <span class="stat-item-label">Published</span>
+              </div>
+              <div class="stat-item">
+                <span class="stat-item-value">{@post_stats.drafts}</span>
+                <span class="stat-item-label">Drafts</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <%!-- Analytics Card --%>
+        <div class="stat-card stat-card-wide">
+          <div class="stat-card-header">
+            <h3 class="stat-card-title">Analytics</h3>
+            <.link navigate={~p"/admin/analytics"} class="stat-card-link">
+              View real-time →
+            </.link>
+          </div>
+          <div class="stat-card-body">
+            <p class="stat-description">
+              View real-time analytics including online users, page views, top pages, geographic distribution, and referrer data.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</Layouts.app>

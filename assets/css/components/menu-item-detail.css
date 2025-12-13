@@ -1,0 +1,178 @@
+/**
+ * Menu Item Detail Component
+ *
+ * Single menu item view with image, description, and order form.
+ */
+
+@layer components {
+    .menu-item-detail {
+        max-width: var(--container-2xl);
+        margin: 0 auto;
+    }
+    .menu-item-detail-info {
+        padding: var(--space-4);
+    }
+
+    .menu-item-detail-container {
+        display: grid;
+        grid-template-columns: 1fr;
+        gap: var(--space-8);
+        margin-bottom: var(--space-8);
+    }
+
+    @media (min-width: 768px) {
+        .menu-item-detail {
+            padding: var(--space-6) 0;
+        }
+        .menu-item-detail-container {
+            grid-template-columns: 1fr 1fr;
+        }
+        .menu-item-detail-info {
+            padding: 0;
+        }
+    }
+
+    /* Left Column */
+    .menu-item-detail-left {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-6);
+    }
+
+    /* Image Section with Slideshow */
+    .menu-item-detail-image-section {
+        position: relative;
+        width: 100%;
+        overflow: hidden;
+    }
+
+    .menu-item-detail-image {
+        width: 100%;
+        height: auto;
+        display: block;
+        border: 1px solid var(--color-border);
+    }
+
+    /* Slideshow (only when multiple images) */
+    .menu-item-detail-image-section[data-slideshow="true"] {
+        position: relative;
+    }
+
+    .menu-item-detail-image-section[data-slideshow="true"]
+        .menu-item-detail-image {
+        position: absolute;
+        top: 0;
+        left: 0;
+        opacity: 0;
+        transition: opacity 1s ease-in-out;
+    }
+
+    .menu-item-detail-image-section[data-slideshow="true"]
+        .menu-item-detail-image:first-child {
+        position: relative;
+    }
+
+    .menu-item-detail-image-section[data-slideshow="true"]
+        .menu-item-detail-image.slide-active {
+        opacity: 1;
+        z-index: 1;
+    }
+
+    /* Info Section */
+    .menu-item-detail-info {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    /* Right Column */
+    .menu-item-detail-right {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-4);
+    }
+
+    .menu-item-detail-title {
+        font-size: var(--font-size-3xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-foreground);
+    }
+
+    .menu-item-detail-tags {
+        display: flex;
+        flex-wrap: wrap;
+        gap: var(--space-2);
+    }
+
+    .menu-item-detail-description {
+        font-size: var(--font-size-lg);
+        line-height: 1.7;
+        color: var(--color-foreground-secondary);
+    }
+
+    .menu-item-prices {
+        padding: var(--space-4);
+        background-color: var(--color-background-secondary);
+        border: 1px solid var(--color-border);
+    }
+
+    .menu-item-price-single .price-amount {
+        font-size: var(--font-size-2xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-primary);
+    }
+
+    .menu-item-price-multiple {
+        display: flex;
+        flex-direction: column;
+        gap: var(--space-2);
+    }
+
+    .price-option {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .price-label {
+        font-weight: var(--font-weight-semibold);
+        color: var(--color-foreground);
+    }
+
+    .price-amount {
+        font-size: var(--font-size-xl);
+        font-weight: var(--font-weight-bold);
+        color: var(--color-primary);
+    }
+
+    .menu-item-actions {
+        margin-top: var(--space-4);
+    }
+
+    .btn-large {
+        padding: var(--space-4) var(--space-6);
+        font-size: var(--font-size-lg);
+        width: 100%;
+    }
+
+    .menu-item-order-note {
+        margin-top: var(--space-6);
+        padding: var(--space-4);
+        background-color: var(--color-background-tertiary);
+        border: 1px solid var(--color-border);
+        color: var(--color-foreground-secondary);
+    }
+
+    .menu-item-order-note ul {
+        margin-top: var(--space-2);
+        padding-left: var(--space-5);
+    }
+
+    .menu-item-order-note li {
+        margin-bottom: var(--space-1);
+    }
+
+    .menu-item-back {
+        margin-top: var(--space-6);
+    }
+}

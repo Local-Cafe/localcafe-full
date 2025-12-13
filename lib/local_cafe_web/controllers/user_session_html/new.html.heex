@@ -1,0 +1,74 @@
+<Layouts.app
+  flash={@flash}
+  current_scope={@current_scope}
+  current_path={@conn.request_path}
+  cart_count={@cart_count}
+  cart_subtotal={@cart_subtotal}
+  notification_count={@notification_count}
+>
+  <.title>
+    <h1>Log in</h1>
+  </.title>
+
+  <div class="auth-container">
+    <div class="auth-header">
+      <p class="auth-subtitle">
+        <%= if @current_scope do %>
+          You need to reauthenticate to perform sensitive actions on your account.
+        <% else %>
+          Don't have an account?
+          <.link navigate={~p"/users/register"}>Sign up</.link>
+          for an account now.
+        <% end %>
+      </p>
+    </div>
+
+    <div :if={local_mail_adapter?()} class="auth-alert">
+      <p>You are running the local mail adapter.</p>
+      <p>
+        To see sent emails, visit <.link href="/dev/mailbox">the mailbox page</.link>.
+      </p>
+    </div>
+
+    <.form :let={f} for={@form} as={:user} id="login_form_magic" action={~p"/users/log-in"} class="auth-form">
+      <.input
+        readonly={!!@current_scope}
+        field={f[:email]}
+        type="email"
+        label="Email"
+        placeholder="your@email.com"
+        required
+      />
+      <.button class="btn-primary btn-auth">
+        Log in with email <span aria-hidden="true">→</span>
+      </.button>
+    </.form>
+
+    <div class="form-divider">
+      <span class="form-divider-text">or</span>
+    </div>
+
+    <.form :let={f} for={@form} as={:user} id="login_form_password" action={~p"/users/log-in"} class="auth-form">
+      <.input
+        readonly={!!@current_scope}
+        field={f[:email]}
+        type="email"
+        label="Email"
+        placeholder="your@email.com"
+        required
+      />
+      <.input
+        field={f[:password]}
+        type="password"
+        label="Password"
+        autocomplete="current-password"
+      />
+      <.button class="btn-primary btn-auth" name={@form[:remember_me].name} value="true">
+        Log in and stay logged in <span aria-hidden="true">→</span>
+      </.button>
+      <.button class="btn-primary btn-auth btn-auth-secondary">
+        Log in only this time
+      </.button>
+    </.form>
+  </div>
+</Layouts.app>

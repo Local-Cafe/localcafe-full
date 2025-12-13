@@ -1,0 +1,235 @@
+@layer components {
+  /* Admin Stats */
+  .admin-stats {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
+    gap: var(--space-4);
+    margin-bottom: var(--space-8);
+  }
+
+  .stat-card {
+    padding: var(--space-5);
+    background-color: var(--color-surface-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+    text-align: center;
+    transition: all 0.2s ease;
+  }
+
+  .stat-card:hover {
+    box-shadow: 0 4px 6px -1px rgb(0 0 0 / 0.1), 0 2px 4px -2px rgb(0 0 0 / 0.1);
+    border-color: var(--color-primary);
+  }
+
+  .stat-value {
+    font-size: var(--text-3xl);
+    font-weight: var(--font-bold);
+    color: var(--color-primary);
+    margin-bottom: var(--space-2);
+  }
+
+  .stat-label {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  /* Admin Orders Table */
+  .admin-orders-table-container {
+    overflow-x: auto;
+    background-color: var(--color-surface-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .admin-orders-table {
+    width: 100%;
+    border-collapse: collapse;
+  }
+
+  .admin-orders-table thead {
+    background-color: var(--literal-slate-50);
+    border-bottom: 2px solid var(--color-border);
+  }
+
+  .admin-orders-table th {
+    padding: var(--space-4);
+    text-align: left;
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    color: var(--color-text-primary);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .admin-orders-table tbody tr {
+    border-bottom: 1px solid var(--color-border);
+    transition: background-color 0.2s ease;
+  }
+
+  .admin-orders-table tbody tr:hover {
+    background-color: var(--literal-slate-50);
+  }
+
+  .admin-orders-table tbody tr:last-child {
+    border-bottom: none;
+  }
+
+  .admin-orders-table td {
+    padding: var(--space-4);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .admin-orders-table .order-number-link {
+    font-weight: var(--font-semibold);
+    color: var(--color-primary);
+    text-decoration: none;
+  }
+
+  .admin-orders-table .order-number-link:hover {
+    text-decoration: underline;
+  }
+
+  .admin-orders-table .order-total {
+    font-weight: var(--font-semibold);
+    color: var(--color-text-primary);
+  }
+
+  /* Responsive Table */
+  @media (max-width: 768px) {
+    .admin-orders-table {
+      font-size: var(--text-xs);
+    }
+
+    .admin-orders-table th,
+    .admin-orders-table td {
+      padding: var(--space-2);
+    }
+
+    /* Hide less important columns on mobile */
+    .admin-orders-table th:nth-child(3),
+    .admin-orders-table td:nth-child(3) {
+      display: none;
+    }
+  }
+
+  /* Order Status History */
+  .order-status-history {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    background-color: var(--color-surface-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .order-status-history h3 {
+    margin-bottom: var(--space-4);
+  }
+
+  .status-timeline {
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-4);
+  }
+
+  .status-event {
+    padding: var(--space-4);
+    background-color: var(--literal-slate-50);
+    border-left: 3px solid var(--color-primary);
+    border-radius: var(--radius-md);
+  }
+
+  .status-event-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: var(--space-2);
+    flex-wrap: wrap;
+    gap: var(--space-2);
+  }
+
+  .status-badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-3);
+    font-size: var(--text-sm);
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-full);
+  }
+
+  .status-event-time {
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .status-event-meta {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+    font-size: var(--text-sm);
+    color: var(--color-text-secondary);
+  }
+
+  .status-event-user {
+    display: flex;
+    align-items: center;
+    gap: var(--space-2);
+  }
+
+  .admin-badge {
+    display: inline-block;
+    padding: var(--space-1) var(--space-2);
+    background-color: var(--color-primary);
+    color: white;
+    font-size: var(--text-xs);
+    font-weight: var(--font-semibold);
+    border-radius: var(--radius-sm);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+
+  .no-events {
+    color: var(--color-text-secondary);
+    font-style: italic;
+  }
+
+  /* Order Status Management */
+  .order-status-management {
+    margin-top: var(--space-8);
+    padding: var(--space-6);
+    background-color: var(--color-surface-primary);
+    border: 1px solid var(--color-border);
+    border-radius: var(--radius-lg);
+  }
+
+  .order-status-management h3 {
+    margin-bottom: var(--space-4);
+  }
+
+  .order-status-management .current-status {
+    margin-bottom: var(--space-4);
+    font-size: var(--text-base);
+    color: var(--color-text-secondary);
+  }
+
+  .status-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--space-3);
+  }
+
+  .status-buttons form {
+    margin: 0;
+  }
+
+  @media (max-width: 768px) {
+    .status-buttons {
+      flex-direction: column;
+    }
+
+    .status-buttons button {
+      width: 100%;
+    }
+  }
+}
